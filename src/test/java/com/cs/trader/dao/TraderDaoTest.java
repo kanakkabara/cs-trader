@@ -13,6 +13,8 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.cs.trader.domain.Trader;
+import com.cs.trader.exceptions.InvalidFieldException;
+import com.cs.trader.exceptions.TraderNotFoundException;
 
 
 @RunWith(SpringRunner.class)
@@ -24,7 +26,7 @@ public class TraderDaoTest {
 	TraderDao dao;
 	
 	@Test
-	public void retrieveAllTraders() {
+	public void findAllTraders() {
 		List<Trader> traders = dao.findTraders();
 		for(Trader t : traders) {
 			System.out.println(t);
@@ -33,9 +35,14 @@ public class TraderDaoTest {
 	}
 	
 	@Test
-	public void retrieveTraderById() {
+	public void findTraderById() {
 		Trader trader = dao.findTraderById(2);
 		assertTrue(trader.getFirstName(), "Kevin".equals(trader.getFirstName()));
+	}
+	
+	@Test(expected = TraderNotFoundException.class)
+	public void findTraderByInvalidId() {
+		Trader trader = dao.findTraderById(911);
 	}
 	
 	@Test
@@ -43,6 +50,12 @@ public class TraderDaoTest {
 		Trader trader = new Trader("John","Smith","johns@gmail.com","6590003213","Sentosa");
 		int status = dao.addTrader(trader);
 		assertTrue("Row not inserted successfully",status == 1);
+	}
+	
+	@Test(expected = InvalidFieldException.class)
+	public void addTraderWithInvalidFields() {
+		Trader trader = new Trader("John",null,"johns@gmail.com","6590003213","Sentosa");
+		int status = dao.addTrader(trader);
 	}
 	
 	@Test
