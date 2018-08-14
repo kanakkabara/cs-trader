@@ -3,22 +3,22 @@ package com.cs.trader.domain;
 import java.sql.Timestamp;
 
 public class Order {
-	private double orderId;
+	private long orderId;
 	private String symbol;
 	private String instruction;
 	private String orderType;
 	private int price;
 	private int volume;
 	private Timestamp placementTimestamp;
-	private double traderId;
+	private long traderId;
 	private String status;
 	private boolean fulfilled;
 	private boolean deleted;
 	
-	public double getOrderId() {
+	public long getOrderId() {
 		return orderId;
 	}
-	public void setOrderId(double orderId) {
+	public void setOrderId(long orderId) {
 		this.orderId = orderId;
 	}
 	public String getSymbol() {
@@ -57,10 +57,10 @@ public class Order {
 	public void setPlacementTimestamp(Timestamp placementTimestamp) {
 		this.placementTimestamp = placementTimestamp;
 	}
-	public double getTraderId() {
+	public long getTraderId() {
 		return traderId;
 	}
-	public void setTraderId(double traderId) {
+	public void setTraderId(long traderId) {
 		this.traderId = traderId;
 	}
 	public String getStatus() {
