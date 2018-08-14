@@ -27,6 +27,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.and()
 		.authorizeRequests()
 		.antMatchers("/h2/**").permitAll()
+		.antMatchers("/traders/").hasRole("USER")
 			.and()
 		.httpBasic()
 			.and()

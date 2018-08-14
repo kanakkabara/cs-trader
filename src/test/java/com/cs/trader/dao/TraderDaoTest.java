@@ -24,7 +24,7 @@ public class TraderDaoTest {
 	TraderDao dao;
 	
 	@Test
-	public void retrieveAllTraders() {
+	public void findAllTraders() {
 		List<Trader> traders = dao.findTraders();
 		for(Trader t : traders) {
 			System.out.println(t);
@@ -33,7 +33,7 @@ public class TraderDaoTest {
 	}
 	
 	@Test
-	public void retrieveTraderById() {
+	public void findTraderById() {
 		Trader trader = dao.findTraderById(2);
 		assertTrue(trader.getFirstName(), "Kevin".equals(trader.getFirstName()));
 	}
