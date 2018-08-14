@@ -2,13 +2,13 @@ package com.cs.trader.domain;
 
 public class Trader {
 	private String firstName, lastName, email, phone, address;
-	private int traderId;
+	private long traderId;
 	
 	public Trader() {
 		super();
 	}
 	
-	public Trader(String firstName, String lastName, String email, String phone, String address, int traderId) {
+	public Trader(String firstName, String lastName, String email, String phone, String address, long traderId) {
 		super();
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -18,6 +18,15 @@ public class Trader {
 		this.traderId = traderId;
 	}
 	
+	public Trader(String firstName, String lastName, String email, String phone, String address) {
+		super();
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
+		this.phone = phone;
+		this.address = address;
+	}
+
 	public String getFirstName() {
 		return firstName;
 	}
@@ -58,11 +67,11 @@ public class Trader {
 		this.address = address;
 	}
 	
-	public int getTraderId() {
+	public long getTraderId() {
 		return traderId;
 	}
 	
-	public void setTraderId(int traderId) {
+	public void setTraderId(long traderId) {
 		this.traderId = traderId;
 	}
 	
