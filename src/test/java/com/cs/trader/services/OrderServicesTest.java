@@ -17,45 +17,48 @@ public class OrderServicesTest {
 	OrderService orderService;
 	
 	@Test
-	public void symbolValidation() {
+	public void validateSymbolOnOrderPlacement() {
 		assertTrue("ticker symbol must exist in the exchange", true);
 	}
 	
 	@Test
-	public void instructionValidation() {
+	public void validateInstructionOnOrderPlacement() {
 		assertTrue("instruction must be either 'BUY' or 'SELL'", true);
 	}
 	
 	@Test
-	public void typeValidation() {
+	public void validateTypeOnOrderPlacement() {
 		assertTrue("type must be either 'LIMIT' or 'MARKET'", true);
 	}
 	
 	@Test
-	public void priceValidation() {
+	public void validatePriceOnOrderPlacement() {
 		assertTrue("price must be a positive number or null", true);
 	}
 	
 	@Test
-	public void volumeValidation() {
+	public void validateVolumeOnOrderPlacement() {
 		assertTrue("number of shares must be a positive number", true);
 	}
 	
 	@Test
-	public void traderValidation() {
+	public void validateTraderIdOnOrderPlacement() {
 		assertTrue("trader must be registered", true);
 	}
 	
 	@Test
-	public void onLimitTypeOrder() {
+	public void validateLimitTypeOrderOnOrderPlacement() {
 		assertTrue("price must be a positive number", true);
 	}
 	
 	@Test
-	public void onMarketTypeOrder() {
-		assertTrue("price must be a positive number", true);
+	public void validateMarketTypeOrderOnOrderPlacement() {
+		assertTrue("price must be null", true);
 	}
 
-
+	@Test
+	public void canPlaceValidLimitTypeOrder() {
+		assertTrue("price must be null", true);
+	}
 
 }

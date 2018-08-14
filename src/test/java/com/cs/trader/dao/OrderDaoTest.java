@@ -39,6 +39,7 @@ public class OrderDaoTest {
 		assertThat("should allow inserting null value as price", orderId, is(greaterThan(0L)));
 	}
 	
+	@Test
 	public void onFindingOrderById() {
 		// TODO: delete and recreate database, insert order, retrieve id 1 
 	}
