@@ -24,6 +24,8 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.cs.trader.domain.Trader;
+import com.cs.trader.exceptions.TraderNotFoundException;
+import com.cs.trader.exceptions.TraderStillWorkingException;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
@@ -89,6 +91,18 @@ public class TraderControllerTest {
 	}
 	
 	@Test
+	public void findTraderByInvalidIdRequest() {
+		given()
+			.auth().basic("john", "smith")
+			.accept(MediaType.APPLICATION_JSON_VALUE).
+		when()
+			.get("/traders/911").
+		then()
+			.statusCode(HttpStatus.SC_NOT_FOUND);
+		
+	}
+	
+	@Test
 	public void deleteTraderRequest() {
 			ResponseBody body =
 				given()
@@ -103,6 +117,17 @@ public class TraderControllerTest {
 	}
 	
 	@Test
+	public void deleteWorkingTraderRequest() {
+		given()
+			.auth().basic("john", "smith")
+			.accept(MediaType.APPLICATION_JSON_VALUE).
+		when()
+			.delete("/traders/1").
+		then()
+			.statusCode(HttpStatus.SC_BAD_REQUEST);
+	}
+	
+	@Test
 	public void addTraderRequest() {
 		
 		Map<String, Object>  jsonAsMap = new HashMap<>();
@@ -113,17 +138,38 @@ public class TraderControllerTest {
 		jsonAsMap.put("address", "Mayhem");
 		
 		ResponseBody body = 
-				given()
-					.auth().basic("john", "smith")
-					.contentType("application/json")
-					.body(jsonAsMap)
-					.accept(MediaType.APPLICATION_JSON_VALUE).
-				when()
-					.post("/traders").
-				then()
-					.statusCode(HttpStatus.SC_OK).
-				and()
-					.extract().response().body();
+			given()
+				.auth().basic("john", "smith")
+				.contentType("application/json")
+				.body(jsonAsMap)
+				.accept(MediaType.APPLICATION_JSON_VALUE).
+			when()
+				.post("/traders").
+			then()
+				.statusCode(HttpStatus.SC_OK).
+			and()
+				.extract().response().body();
 		assertTrue("Expecting 1 row affected.", body.asString().equals("1"));
+	}
+	
+	@Test
+	public void addTraderWithInvalidFieldRequest() {
+		
+		Map<String, Object>  jsonAsMap = new HashMap<>();
+		jsonAsMap.put("firstName", "Adam");
+		jsonAsMap.put("lastName", "Apple");
+		jsonAsMap.put("email", null);
+		jsonAsMap.put("phone", "6592345678");
+		jsonAsMap.put("address", "Mayhem");
+		
+		given()
+			.auth().basic("john", "smith")
+			.contentType("application/json")
+			.body(jsonAsMap)
+			.accept(MediaType.APPLICATION_JSON_VALUE).
+		when()
+			.post("/traders").
+		then()
+			.statusCode(HttpStatus.SC_BAD_REQUEST);
 	}
 }

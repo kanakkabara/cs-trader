@@ -13,6 +13,9 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.cs.trader.domain.Trader;
+import com.cs.trader.exceptions.InvalidFieldException;
+import com.cs.trader.exceptions.TraderNotFoundException;
+import com.cs.trader.exceptions.TraderStillWorkingException;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -25,9 +28,6 @@ public class TraderServiceTest {
 	@Test
 	public void findAllTraders() {
 		List<Trader> traders = service.findTraders();
-		for(Trader t : traders) {
-			System.out.println(t);
-		}
 		assertTrue("Number of users found is incorrect.",traders.size() == 3);
 	}
 	
@@ -37,6 +37,11 @@ public class TraderServiceTest {
 		assertTrue(trader.getFirstName(), "Kevin".equals(trader.getFirstName()));
 	}
 	
+	@Test(expected = TraderNotFoundException.class)
+	public void findTraderByInvalidId() {
+		Trader trader = service.findTraderById(911);
+	}
+	
 	@Test
 	public void addTrader() {
 		Trader trader = new Trader("John","Smith","johns@gmail.com","6590003213","Sentosa");
@@ -44,10 +49,22 @@ public class TraderServiceTest {
 		assertTrue("Row not inserted successfully",status == 1);
 	}
 	
+	@Test(expected = InvalidFieldException.class)
+	public void addTraderWithInvalidFields() {
+		Trader trader = new Trader("John","Smith",null,"6590003213","Sentosa");
+		int status = service.addTrader(trader);
+		
+	}
+	
 	@Test
 	public void deleteTrader() {
 		int status = service.deleteTrader(1);
 		assertTrue("Row not deleted successfully", status == 1);
+	}
+	
+	@Test(expected = TraderStillWorkingException.class)
+	public void deleteWorkingTrader() {
+		int status = service.deleteTrader(3);
 	}
 	
 }

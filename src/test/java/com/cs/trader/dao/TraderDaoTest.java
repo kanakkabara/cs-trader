@@ -13,6 +13,8 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.cs.trader.domain.Trader;
+import com.cs.trader.exceptions.InvalidFieldException;
+import com.cs.trader.exceptions.TraderNotFoundException;
 
 
 @RunWith(SpringRunner.class)
@@ -38,11 +40,22 @@ public class TraderDaoTest {
 		assertTrue(trader.getFirstName(), "Kevin".equals(trader.getFirstName()));
 	}
 	
+	@Test(expected = TraderNotFoundException.class)
+	public void findTraderByInvalidId() {
+		Trader trader = dao.findTraderById(911);
+	}
+	
 	@Test
 	public void addTrader() {
 		Trader trader = new Trader("John","Smith","johns@gmail.com","6590003213","Sentosa");
 		int status = dao.addTrader(trader);
 		assertTrue("Row not inserted successfully",status == 1);
+	}
+	
+	@Test(expected = InvalidFieldException.class)
+	public void addTraderWithInvalidFields() {
+		Trader trader = new Trader("John",null,"johns@gmail.com","6590003213","Sentosa");
+		int status = dao.addTrader(trader);
 	}
 	
 	@Test

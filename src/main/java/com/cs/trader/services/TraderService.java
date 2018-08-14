@@ -25,6 +25,8 @@ public class TraderService {
 		int status = -1;
 		//if(!hasExistingOrders){
 			status = dao.deleteTrader(id);
+		//}else{
+			//throw new TraderStillWorkingException("Trader has existing orders.");
 		//}
 		return status;
 	}
