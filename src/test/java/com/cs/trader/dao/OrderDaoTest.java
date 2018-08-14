@@ -1,9 +1,9 @@
 package com.cs.trader.dao;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
-import java.util.Date;
-import java.util.List;
+import java.sql.Timestamp;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,20 +19,27 @@ import com.cs.trader.domain.Order;
 @SpringBootTest(classes = CsTraderApplication.class)
 public class OrderDaoTest {
 	@Autowired
-	private OrderDao orderDao;
+	OrderDao orderDao;
 	
 	@Test
-	public void placeNewOrderForLimitType() {
-		Order newOrder = new Order("IBM", "SELL", "LIMIT", 760.76, 30, new Date(), 1L);
-		int status = orderDao.addOrder(newOrder);
-		assertEquals(status, 1);
+	public void onAddingAnyRequestType() {
+		Timestamp startTs = Timestamp.from(java.time.Instant.now());
+		long orderId = orderDao.addOrder("TEST1-1", "SELL", "LIMIT", new Double(760.76), 30, 1L);
+		Timestamp endTs = Timestamp.from(java.time.Instant.now());
+		assertThat("should return order id", orderId, is(greaterThan(0L)));
+		
+		Order createdOrder = orderDao.findOrderById(orderId);
+		assertThat("should generate order placement timestamp", createdOrder.getPlacementTimestamp(), 
+				is(both(greaterThanOrEqualTo(startTs)).and(lessThanOrEqualTo(endTs))));
 	}
 	
 	@Test
-	public void placeNewOrderForMarketTypeWithNullPrice() {
-		Order newOrder = new Order("IBM", "SELL", "MARKET", null, 30, new Date(), 1L);
-		int status = orderDao.addOrder(newOrder);
-		assertEquals(status, 1);
+	public void onAddingMarketTypeRequest() {
+		long orderId = orderDao.addOrder("TEST2", "SELL", "MARKET", null, 30, 1L);
+		assertThat("should allow inserting null value as price", orderId, is(greaterThan(0L)));
 	}
 	
+	public void onFindingOrderById() {
+		// TODO: delete and recreate database, insert order, retrieve id 1 
+	}
 }
