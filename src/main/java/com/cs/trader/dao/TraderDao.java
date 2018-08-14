@@ -7,9 +7,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
 
 import com.cs.trader.domain.Trader;
 
+@Repository
 public class TraderDao {
 	
 	@Autowired
@@ -30,11 +32,11 @@ public class TraderDao {
 	}
 	
 	public List<Trader> findTraders(){
-		return jdbcTemplate.query("select * from users",
+		return jdbcTemplate.query("SELECT * FROM TRADERS",
 				new TraderRowMapper());
 	}
 	
-	public Trader findTraderById(int id) {
+	public Trader findTraderById(long id) {
 		String sql = "SELECT * FROM TRADERS WHERE TRADER_ID = ?";
 		return jdbcTemplate.queryForObject(sql,
 				new TraderRowMapper(), id);

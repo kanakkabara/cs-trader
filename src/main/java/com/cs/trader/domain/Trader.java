@@ -74,6 +74,11 @@ public class Trader {
 	public void setTraderId(long traderId) {
 		this.traderId = traderId;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "Trader [firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", phone=" + phone
+				+ ", address=" + address + ", traderId=" + traderId + "]";
+	}
 	
 }

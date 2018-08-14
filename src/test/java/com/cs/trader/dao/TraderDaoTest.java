@@ -21,15 +21,18 @@ public class TraderDaoTest {
 	TraderDao dao;
 	
 	@Test
-	public void testRetrieveAllTraders() {
-		List<Trader> users = dao.findTraders();
-		assertTrue("Number of users found is incorrect.",users.size() == 3);
+	public void retrieveAllTraders() {
+		List<Trader> traders = dao.findTraders();
+		for(Trader t : traders) {
+			System.out.println(t);
+		}
+		assertTrue("Number of users found is incorrect.",traders.size() == 3);
 	}
 	
 	@Test
-	public void testRetrieveTraderById() {
-		Trader trader = dao.findTraderById(1);
-		assertTrue(trader.getFirstName(), "Ernest".equals(trader.getFirstName()));
+	public void retrieveTraderById() {
+		Trader trader = dao.findTraderById(2);
+		assertTrue(trader.getFirstName(), "Kevin".equals(trader.getFirstName()));
 	}
 	
 	@Test
