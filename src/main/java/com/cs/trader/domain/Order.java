@@ -1,19 +1,30 @@
 package com.cs.trader.domain;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 public class Order {
 	private long orderId;
 	private String symbol;
 	private String instruction;
 	private String orderType;
-	private int price;
+	private Double price;
 	private int volume;
-	private Timestamp placementTimestamp;
+	private Date placementTimestamp;
 	private long traderId;
 	private String status;
-	private boolean fulfilled;
 	private boolean deleted;
+	
+	public Order(String symbol, String instruction, String orderType, Double price, int volume,
+			Date placementTimestamp, long traderId) {
+		super();
+		this.symbol = symbol;
+		this.instruction = instruction;
+		this.orderType = orderType;
+		this.price = price;
+		this.volume = volume;
+		this.placementTimestamp = placementTimestamp;
+		this.traderId = traderId;
+	}
 	
 	public long getOrderId() {
 		return orderId;
@@ -39,10 +50,10 @@ public class Order {
 	public void setOrderType(String orderType) {
 		this.orderType = orderType;
 	}
-	public int getPrice() {
+	public Double getPrice() {
 		return price;
 	}
-	public void setPrice(int price) {
+	public void setPrice(Double price) {
 		this.price = price;
 	}
 	public int getVolume() {
@@ -51,10 +62,10 @@ public class Order {
 	public void setVolume(int volume) {
 		this.volume = volume;
 	}
-	public Timestamp getPlacementTimestamp() {
+	public Date getPlacementTimestamp() {
 		return placementTimestamp;
 	}
-	public void setPlacementTimestamp(Timestamp placementTimestamp) {
+	public void setPlacementTimestamp(Date placementTimestamp) {
 		this.placementTimestamp = placementTimestamp;
 	}
 	public long getTraderId() {
@@ -68,12 +79,6 @@ public class Order {
 	}
 	public void setStatus(String status) {
 		this.status = status;
-	}
-	public boolean isFulfilled() {
-		return fulfilled;
-	}
-	public void setFulfilled(boolean fulfilled) {
-		this.fulfilled = fulfilled;
 	}
 	public boolean isDeleted() {
 		return deleted;
