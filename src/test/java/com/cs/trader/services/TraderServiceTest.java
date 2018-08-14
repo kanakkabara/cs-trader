@@ -23,7 +23,7 @@ public class TraderServiceTest {
 	TraderService service;
 	
 	@Test
-	public void retrieveAllTraders() {
+	public void findAllTraders() {
 		List<Trader> traders = service.findTraders();
 		for(Trader t : traders) {
 			System.out.println(t);
@@ -32,7 +32,7 @@ public class TraderServiceTest {
 	}
 	
 	@Test
-	public void retrieveTraderById() {
+	public void findTraderById() {
 		Trader trader = service.findTraderById(2);
 		assertTrue(trader.getFirstName(), "Kevin".equals(trader.getFirstName()));
 	}
