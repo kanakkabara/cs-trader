@@ -1,4 +1,4 @@
-package com.cs.trader.dao;
+package com.cs.trader.services;
 
 import static org.junit.Assert.assertTrue;
 
@@ -14,18 +14,17 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.cs.trader.domain.Trader;
 
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
-public class TraderDaoTest {
+public class TraderServiceTest {
 	
 	@Autowired
-	TraderDao dao;
+	TraderService service;
 	
 	@Test
 	public void retrieveAllTraders() {
-		List<Trader> traders = dao.findTraders();
+		List<Trader> traders = service.findTraders();
 		for(Trader t : traders) {
 			System.out.println(t);
 		}
@@ -34,20 +33,20 @@ public class TraderDaoTest {
 	
 	@Test
 	public void retrieveTraderById() {
-		Trader trader = dao.findTraderById(2);
+		Trader trader = service.findTraderById(2);
 		assertTrue(trader.getFirstName(), "Kevin".equals(trader.getFirstName()));
 	}
 	
 	@Test
 	public void addTrader() {
 		Trader trader = new Trader("John","Smith","johns@gmail.com","6590003213","Sentosa");
-		int status = dao.addTrader(trader);
+		int status = service.addTrader(trader);
 		assertTrue("Row not inserted successfully",status == 1);
 	}
 	
 	@Test
 	public void deleteTrader() {
-		int status = dao.deleteTrader(1);
+		int status = service.deleteTrader(1);
 		assertTrue("Row not deleted successfully", status == 1);
 	}
 	

@@ -25,7 +25,7 @@ public class TraderDao {
 		return status;
 	}
 	
-	public int deleteTrader(int id) {
+	public int deleteTrader(long id) {
 		String sql = "DELETE FROM TRADERS WHERE TRADER_ID = ?";
 		int status = jdbcTemplate.update(sql, new Object[] {id});
 		return status;
