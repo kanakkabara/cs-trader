@@ -14,7 +14,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.cs.trader.CsTraderApplication;
 import com.cs.trader.domain.Order;
 
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = CsTraderApplication.class)
 public class OrderDaoTest {
@@ -28,7 +27,7 @@ public class OrderDaoTest {
 		Timestamp endTs = Timestamp.from(java.time.Instant.now());
 		assertThat("should return order id", orderId, is(greaterThan(0L)));
 		
-		Order createdOrder = orderDao.findOrderById(orderId);
+		Order createdOrder = orderDao.findOrderByOrderId(orderId);
 		assertThat("should generate order placement timestamp", createdOrder.getPlacementTimestamp(), 
 				is(both(greaterThanOrEqualTo(startTs)).and(lessThanOrEqualTo(endTs))));
 	}

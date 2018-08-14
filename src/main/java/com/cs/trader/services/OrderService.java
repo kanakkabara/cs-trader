@@ -1,9 +1,12 @@
 package com.cs.trader.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.cs.trader.dao.OrderDao;
+import com.cs.trader.domain.Order;
 
 @Component
 public class OrderService {
@@ -14,6 +17,10 @@ public class OrderService {
 		
 		return orderDao.addOrder(symbol, instruction, type, price, volume, traderId);
 	};
+	
+	public List<Order> retrieveOrdersByTrader(long traderId) {
+		return orderDao.findOrderByTraderId(traderId);
+	}
 	
 }
 

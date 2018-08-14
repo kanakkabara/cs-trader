@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -52,9 +53,14 @@ public class OrderDao {
 		    return key.getKey().longValue();
 	}
 	
-	public Order findOrderById(long id) {
+	public Order findOrderByOrderId(long orderId) {
 		return jdbcTemplate.queryForObject("SELECT * FROM ORDERS WHERE ORDER_ID=?", 
-				new OrderRowMapper(), id);
+				new OrderRowMapper(), orderId);
+	}
+	
+	public List<Order> findOrderByTraderId(long traderId) {
+		return jdbcTemplate.query("SELECT * FROM ORDERS WHERE TRADER_ID=?", 
+				new OrderRowMapper(), traderId);
 	}
 	
 	class OrderRowMapper implements RowMapper<Order>
