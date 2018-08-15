@@ -2,6 +2,7 @@ package com.cs.trader.services;
 
 import java.util.List;
 
+import org.glassfish.jersey.model.internal.RankedComparator.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +47,11 @@ public class TraderService {
 	
 	public ActivitySummary findActivitySummaryByTraderId(long id) {
 		return orderDao.findActivitySummaryByTraderId(id);
+	}
+
+	public List<Order> findOrdersByTraderId(long id) {
+		
+		return null;
 	}
 	
 }

@@ -6,16 +6,16 @@ import java.util.Map;
 
 public class ActivitySummary {
 	private Date lastOrderPlacement;
-	Map<String, Integer> orders;
+	Map<String, Long> orders;
 	
 	public ActivitySummary() {
 		this.lastOrderPlacement = null;
-		this.orders = new HashMap<String, Integer>();
+		this.orders = new HashMap<String, Long>();
 	}
 	
 	public ActivitySummary(Date lastOrderPlacement) {
 		this.lastOrderPlacement = lastOrderPlacement;
-		this.orders = new HashMap<String, Integer>();
+		this.orders = new HashMap<String, Long>();
 	}
 
 	public Date getLastOrderPlacement() {
@@ -26,12 +26,18 @@ public class ActivitySummary {
 		this.lastOrderPlacement = lastOrderPlacement;
 	}
 
-	public Map<String, Integer> getOrders() {
+	public Map<String, Long> getOrders() {
 		return orders;
 	}
 
-	public void setOrders(Map<String, Integer> orders) {
+	public void setOrders(Map<String, Long> orders) {
 		this.orders = orders;
 	}
+
+	@Override
+	public String toString() {
+		return "ActivitySummary [lastOrderPlacement=" + lastOrderPlacement + ", orders=" + orders + "]";
+	}
+	
 	
 }

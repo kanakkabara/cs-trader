@@ -1,9 +1,11 @@
 package com.cs.trader.services;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.glassfish.jersey.model.internal.RankedComparator.Order;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.cs.trader.domain.ActivitySummary;
 import com.cs.trader.domain.Trader;
 import com.cs.trader.exceptions.InvalidFieldException;
 import com.cs.trader.exceptions.TraderNotFoundException;
@@ -65,6 +68,31 @@ public class TraderServiceTest {
 	@Test(expected = TraderStillWorkingException.class)
 	public void deleteWorkingTrader() {
 		int status = service.deleteTrader(3);
+	}
+	
+	@Test
+	public void findActivitySummaryByTraderId() {
+		ActivitySummary summary = service.findActivitySummaryByTraderId(1);
+		System.out.println(summary);
+		assertTrue("", summary.getOrders().get("OPEN") == 6);
+	}
+	
+	@Test
+	public void findActivitySummaryByInvalidTraderId() {
+		ActivitySummary summary = service.findActivitySummaryByTraderId(999);
+		System.out.println(summary);
+		assertTrue("", summary.getOrders().get("OPEN") == 6);
+	}
+	
+	@Test
+	public void findOrdersByTraderId() {
+		List<Order> orders = service.findOrdersByTraderId(1);
+		assertTrue("", orders.size() == 8);
+	}
+	
+	@Test(expected = TraderNotFoundException.class)
+	public void findOrdersByInvalidTraderId() {
+		List<Order> orders = service.findOrdersByTraderId(999);
 	}
 	
 }
