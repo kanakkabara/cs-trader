@@ -250,7 +250,7 @@ public class TraderControllerTest {
 	public void findTopFiveTradersByVolume() {
 		Response response = 
 				given()
-					.auth().basic("john", "smith")
+					.auth().form("john", "smith")
 					.accept(MediaType.APPLICATION_JSON_VALUE).
 				when()
 					.get("/traders/topbyvolume").
