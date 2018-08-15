@@ -26,6 +26,8 @@ public class Order {
 		this.traderId = traderId;
 	}
 	
+	public Order() {}
+
 	public long getOrderId() {
 		return orderId;
 	}
