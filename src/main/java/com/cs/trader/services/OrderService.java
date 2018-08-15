@@ -3,13 +3,16 @@ package com.cs.trader.services;
 import com.cs.trader.dao.OrderDao;
 import com.cs.trader.domain.Company;
 import com.cs.trader.domain.Order;
+import com.cs.trader.domain.OrderStatus;
 import com.cs.trader.domain.Trader;
 import com.cs.trader.exceptions.CompanyNotFoundException;
 import com.cs.trader.exceptions.InvalidFieldException;
 import com.cs.trader.exceptions.TraderNotFoundException;
+import com.cs.trader.exceptions.UnauthorizedOperationsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.ws.rs.BadRequestException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -60,6 +63,10 @@ public class OrderService {
 		return orderDao.addOrder(order);
 	}
 
+	public Order retrieveOrderByOrderId(long orderId) {
+		return orderDao.findOrderByOrderId(orderId);
+	}
+
 	public List<Order> retrieveOrdersByTrader(long traderId) {
 		return orderDao.findOrderByTraderId(traderId);
 	}
@@ -67,6 +74,21 @@ public class OrderService {
 	public List<Order> retrieveOrdersByCompany(Company company) {
 		String tickerSymbol = company.getTicker();
 		return orderDao.findOrdersBySymbol(tickerSymbol);
+	}
+
+
+	public int cancelOrder(long orderId, long traderId) {
+		Order order = orderDao.findOrderByOrderId(orderId);
+
+		if(order.getTraderId() != traderId) {
+			throw new UnauthorizedOperationsException("Trader does not have write access on the requested order");
+		}
+
+		if(!order.getStatus().equals(OrderStatus.OPEN.toString())){
+			throw new BadRequestException("Order is already fulfilled or cancelled");
+		}
+
+		return orderDao.setOrderStatus(orderId, OrderStatus.CANCELLED.toString());
 	}
 	
 }

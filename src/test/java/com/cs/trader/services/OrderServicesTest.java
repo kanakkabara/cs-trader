@@ -3,11 +3,15 @@ package com.cs.trader.services;
 import com.cs.trader.CsTraderApplication;
 import com.cs.trader.domain.Order;
 import com.cs.trader.exceptions.InvalidFieldException;
+import com.cs.trader.exceptions.OrderNotFoundException;
+import com.cs.trader.exceptions.UnauthorizedOperationsException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import javax.ws.rs.BadRequestException;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
@@ -93,4 +97,30 @@ public class OrderServicesTest {
 		long orderId = orderService.placeNewOrder(order);
 	}
 
+	@Test
+	public void canCancelOrderWithOpenStatus() {
+		int response = orderService.cancelOrder(1l, 1l);
+		assertThat("response should be a positive number", response, greaterThan(0));
+	}
+
+	@Test(expected = OrderNotFoundException.class)
+	public void cannotCancelOrderThatDoesNotExist() {
+		int response = orderService.cancelOrder(100l, 1l);
+	}
+
+	@Test(expected = UnauthorizedOperationsException.class)
+	public void cannotCancelOrderCreatedByOtherTrader() {
+		int response = orderService.cancelOrder(1l, 10l);
+	}
+
+	@Test(expected = BadRequestException.class)
+	public void cannotCancelOrderWithFulfilledStatus() {
+		int response = orderService.cancelOrder(7l, 1l);
+	}
+
+	@Test(expected = BadRequestException.class)
+	public void cannotCancelOrderWithCancelledStatus() {
+		int response = orderService.cancelOrder(9l, 1l);
+
+	}
 }

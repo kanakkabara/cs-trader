@@ -12,8 +12,7 @@ public class Order {
 	private Date placementTimestamp;
 	private long traderId;
 	private String status;
-	private boolean deleted;
-	
+
 	public Order(String symbol, String instruction, String orderType, Double price, int volume, long traderId) {
 		super();
 		this.symbol = symbol;
@@ -79,11 +78,5 @@ public class Order {
 	}
 	public void setStatus(String status) {
 		this.status = status;
-	}
-	public boolean isDeleted() {
-		return deleted;
-	}
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
 	}
 }

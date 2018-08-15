@@ -2,6 +2,7 @@ package com.cs.trader.dao;
 
 import com.cs.trader.domain.ActivitySummary;
 import com.cs.trader.domain.Order;
+import com.cs.trader.exceptions.OrderNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -22,7 +23,7 @@ public class OrderDao {
 	
 	public long addOrder(Order order) {
 		String insertSql = "INSERT INTO ORDERS(SYMBOL, INSTRUCTION, ORDER_TYPE, PRICE, VOLUME, "
-				+ "PLACEMENT_TIMESTAMP, TRADER_ID, STATUS, DELETED) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);";
+				+ "PLACEMENT_TIMESTAMP, TRADER_ID, STATUS) VALUES(?, ?, ?, ?, ?, ?, ?, ?);";
 		KeyHolder key = new GeneratedKeyHolder();
 		jdbcTemplate.update(new PreparedStatementCreator() {
 		      @Override
@@ -41,7 +42,6 @@ public class OrderDao {
 		        ps.setTimestamp(6, Timestamp.from(java.time.Instant.now()));
 		        ps.setLong(7, order.getTraderId());
 		        ps.setString(8, "OPEN");
-		        ps.setBoolean(9, false);
 		        return ps;
 		      }
 		    }, key);
@@ -50,8 +50,12 @@ public class OrderDao {
 	}
 	
 	public Order findOrderByOrderId(long orderId) {
-		return jdbcTemplate.queryForObject("SELECT * FROM ORDERS WHERE ORDER_ID=?", 
-				new OrderRowMapper(), orderId);
+		try{
+			return jdbcTemplate.queryForObject("SELECT * FROM ORDERS WHERE ORDER_ID=?",
+					new OrderRowMapper(), orderId);
+		} catch(Exception ex) {
+			throw new OrderNotFoundException("Order with id " + orderId + " cannot be found.");
+		}
 	}
 	
 	public List<Order> findOrderByTraderId(long traderId) {
@@ -62,6 +66,13 @@ public class OrderDao {
 	public List<Order> findOrdersBySymbol(String tickerSymbol) {
 		return jdbcTemplate.query("SELECT * FROM ORDERS WHERE SYMBOL=?",
 				new OrderRowMapper(), tickerSymbol);
+	}
+
+	public int setOrderStatus(long orderId, String newStatus) {
+
+		int numOfRowAffected = jdbcTemplate.update("UPDATE ORDERS SET STATUS=? WHERE ORDER_ID=?",
+				new Object[] {newStatus, orderId});
+		return numOfRowAffected;
 	}
 
 	class OrderRowMapper implements RowMapper<Order>
@@ -78,7 +89,6 @@ public class OrderDao {
 			order.setPlacementTimestamp(rs.getTimestamp("PLACEMENT_TIMESTAMP"));
 			order.setTraderId(rs.getLong("TRADER_ID"));
 			order.setStatus(rs.getString("STATUS"));
-			order.setDeleted(rs.getBoolean("DELETED"));
 			return order;
 		}
 	}

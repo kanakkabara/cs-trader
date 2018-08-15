@@ -2,6 +2,7 @@ package com.cs.trader.dao;
 
 import com.cs.trader.CsTraderApplication;
 import com.cs.trader.domain.Order;
+import com.cs.trader.exceptions.OrderNotFoundException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import java.sql.Timestamp;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = CsTraderApplication.class)
@@ -40,7 +42,23 @@ public class OrderDaoTest {
 	}
 	
 	@Test
-	public void onFindingOrderById() {
+	public void onFindingExistingOrderById() {
 		// TODO: delete and recreate database, insert order, retrieve id 1 
+	}
+
+	@Test(expected = OrderNotFoundException.class)
+	public void onFindingInvalidOrderById() {
+		long nonExistentOrderId = 100l;
+		Order order = orderDao.findOrderByOrderId(nonExistentOrderId);
+	}
+
+
+	@Test
+	public void onUpdatingOrderStatus() {
+		long orderId = 1;
+		String newStatus = "CANCELLED";
+		int response = orderDao.setOrderStatus(orderId, newStatus);
+		Order affectedOrder = orderDao.findOrderByOrderId(orderId);
+		assertEquals("affected order must reflect the new status", newStatus, affectedOrder.getStatus());
 	}
 }
