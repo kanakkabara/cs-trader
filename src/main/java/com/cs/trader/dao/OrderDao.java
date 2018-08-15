@@ -1,6 +1,16 @@
 package com.cs.trader.dao;
 
-import com.cs.trader.domain.Order;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.sql.Types;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -9,8 +19,8 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.*;
-import java.util.List;
+import com.cs.trader.domain.ActivitySummary;
+import com.cs.trader.domain.Order;
 
 @Repository
 public class OrderDao {
@@ -78,5 +88,19 @@ public class OrderDao {
 			order.setDeleted(rs.getBoolean("DELETED"));
 			return order;
 		}
+	}
+	
+	public ActivitySummary findActivitySummaryByTraderId(long traderId) {
+		String sql = "SELECT R.LATEST_ORDER, STATUS, ORDER_COUNT FROM (SELECT MAX(PLACEMENT_TIMESTAMP) AS LATEST_ORDER, TRADER_ID FROM ORDERS WHERE TRADER_ID = ?) R" + 
+				" INNER JOIN (SELECT COUNT(ORDER_ID) AS ORDER_COUNT, STATUS FROM ORDERS WHERE TRADER_ID = ? GROUP BY STATUS) WHERE R.TRADER_ID = TRADER_ID";
+		List<Map<String,Object>> rows = jdbcTemplate.queryForList(sql, traderId, traderId);
+		ActivitySummary summary = new ActivitySummary();
+		Map<String,Long> orders = new HashMap<String, Long>();
+		for (Map row : rows) {
+			summary.setLastOrderPlacement((Timestamp)row.get("LATEST_ORDER"));
+			orders.put(row.get("STATUS").toString(), (Long)row.get("ORDER_COUNT"));
+		}
+		summary.setOrders(orders);
+		return summary;
 	}
 }
