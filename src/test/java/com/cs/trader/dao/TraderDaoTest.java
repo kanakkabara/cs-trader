@@ -40,6 +40,7 @@ public class TraderDaoTest {
 		assertTrue(trader.getFirstName(), "Kevin".equals(trader.getFirstName()));
 	}
 	
+	
 	@Test(expected = TraderNotFoundException.class)
 	public void findTraderByInvalidId() {
 		Trader trader = dao.findTraderById(911);
