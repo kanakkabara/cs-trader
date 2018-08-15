@@ -3,24 +3,18 @@ package com.cs.trader.services;
 import com.cs.trader.dao.OrderDao;
 import com.cs.trader.domain.Company;
 import com.cs.trader.domain.Order;
-import com.cs.trader.domain.Trader;
 import com.cs.trader.exceptions.InvalidFieldException;
-import com.cs.trader.exceptions.TraderNotFoundException;
-import org.apache.commons.lang3.EnumUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 @Component
 public class OrderService {
-	public enum Instructions {
-		BUY, SELL;
-	}
-
-	public enum OrderType {
-		LIMIT, MARKET;
-	}
+	final HashSet<String> instructionsSet = new HashSet<>(Arrays.asList("BUY", "SELL"));
+	final HashSet<String> orderTypesSet = new HashSet<>(Arrays.asList("LIMIT", "MARKET"));
 
 	@Autowired
 	OrderDao orderDao;
@@ -28,12 +22,12 @@ public class OrderService {
 
 	public long placeNewOrder(String symbol, String instruction, String type, Double price, int volume, long traderId) {
 		String normalizedInstr = instruction.toUpperCase();
-		if(!EnumUtils.isValidEnum(Instructions.class, normalizedInstr)) {
+		if(!instructionsSet.contains(normalizedInstr)) {
 			throw new InvalidFieldException("Invalid value for 'instruction' field");
 		}
 
 		String normalizedType = type.toUpperCase();
-		if(!EnumUtils.isValidEnum(OrderType.class, normalizedType)) {
+		if(!orderTypesSet.contains(normalizedType)) {
 			throw new InvalidFieldException("Invalid value for 'type' field");
 		}
 
@@ -44,13 +38,13 @@ public class OrderService {
 		if(volume <= 0) {
 			throw new InvalidFieldException("Invalid value for 'volume' field");
 		}
-		try {
-			Trader trader = traderService.findTraderById(traderId);
-		} catch (TraderNotFoundException ex) {
-			throw new InvalidFieldException("Invalid value for 'traderId' field");
-		}
+//		try {
+//			Trader trader = traderService.findTraderById(traderId);
+//		} catch (TraderNotFoundException ex) {
+//			throw new InvalidFieldException("Invalid value for 'traderId' field");
+//		}
 
-		return orderDao.addOrder(symbol, normalizedInstr, type, price, volume, traderId);
+		return orderDao.addOrder(symbol, normalizedInstr, normalizedType, price, volume, traderId);
 	}
 
 	public List<Order> retrieveOrdersByTrader(long traderId) {
