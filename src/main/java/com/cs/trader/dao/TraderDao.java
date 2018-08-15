@@ -57,6 +57,16 @@ public class TraderDao {
 		}
 	}
 	
+	public Trader findTraderByUsername(String username) {
+		String sql = "SELECT * FROM TRADERS WHERE USERNAME = ?";
+		try {
+			return jdbcTemplate.queryForObject(sql,
+				new TraderRowMapper(), username);
+		}catch(Exception ex) {
+			throw new TraderNotFoundException("Trader with id " + username + " can't be found.");
+		}
+	}
+	
 	public List<TraderRank> findTopFiveTradersByNumTrades() {
 		String sql = "SELECT TOP 5 COUNT(ORDER_ID) NUM_ORDERS, TRADERS.* " + 
 				"FROM TRADERS " + 

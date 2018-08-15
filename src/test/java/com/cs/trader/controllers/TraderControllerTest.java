@@ -53,7 +53,7 @@ public class TraderControllerTest {
 	public void findTradersRequest() {
 		Response response = 
 				given()
-					.auth().form("john", "smith")
+					.auth().basic("john", "smith")
 					.accept(MediaType.APPLICATION_JSON_VALUE).
 				when()
 					.get("/traders").
@@ -70,7 +70,7 @@ public class TraderControllerTest {
 	@Test
 	public void findTraderByIdRequest() {
 		given()
-			.auth().form("john", "smith")
+			.auth().basic("john", "smith")
 			.accept(MediaType.APPLICATION_JSON_VALUE).
 		when()
 			.get("/traders/1").
@@ -94,7 +94,7 @@ public class TraderControllerTest {
 	@Test
 	public void findTraderByInvalidIdRequest() {
 		given()
-			.auth().form("john", "smith")
+			.auth().basic("john", "smith")
 			.accept(MediaType.APPLICATION_JSON_VALUE).
 		when()
 			.get("/traders/911").
@@ -107,7 +107,7 @@ public class TraderControllerTest {
 	public void deleteTraderRequest() {
 			ResponseBody body =
 				given()
-					.auth().form("john", "smith")
+					.auth().basic("john", "smith")
 					.accept(MediaType.APPLICATION_JSON_VALUE).
 				when()
 					.delete("/traders/2").
@@ -120,7 +120,7 @@ public class TraderControllerTest {
 	@Test
 	public void deleteWorkingTraderRequest() {
 		given()
-			.auth().form("john", "smith")
+			.auth().basic("john", "smith")
 			.accept(MediaType.APPLICATION_JSON_VALUE).
 		when()
 			.delete("/traders/1").
@@ -142,7 +142,7 @@ public class TraderControllerTest {
 		
 		ResponseBody body = 
 			given()
-				.auth().form("john", "smith")
+				.auth().basic("john", "smith")
 				.contentType("application/json")
 				.body(jsonAsMap)
 				.accept(MediaType.APPLICATION_JSON_VALUE).
@@ -168,7 +168,7 @@ public class TraderControllerTest {
 		jsonAsMap.put("password", "appuru");
 		
 		given()
-			.auth().form("john", "smith")
+			.auth().basic("john", "smith")
 			.contentType("application/json")
 			.body(jsonAsMap)
 			.accept(MediaType.APPLICATION_JSON_VALUE).
@@ -183,7 +183,7 @@ public class TraderControllerTest {
 		Response response = 
 			given()
 				//.auth().basic("john", "smith")
-				.auth().form("john", "smith")
+				.auth().basic("john", "smith")
 				.contentType("application/json")
 				.accept(MediaType.APPLICATION_JSON_VALUE).
 			when()
@@ -199,7 +199,7 @@ public class TraderControllerTest {
 	@Test
 	public void findOrdersByInvalidTraderIdRequest() {
 		given()
-			.auth().form("john", "smith")
+			.auth().basic("john", "smith")
 			.contentType("application/json")
 			.accept(MediaType.APPLICATION_JSON_VALUE).
 		when()
@@ -212,7 +212,7 @@ public class TraderControllerTest {
 	public void findActivitySummaryByTraderIdRequest() {
 		Response response = 
 				given()
-					.auth().form("john", "smith")
+					.auth().basic("john", "smith")
 					.contentType("application/json")
 					.accept(MediaType.APPLICATION_JSON_VALUE).
 				when()
@@ -229,7 +229,7 @@ public class TraderControllerTest {
 	@Test
 	public void findActivitySummaryByInvalidTraderIdRequest() {
 		given()
-			.auth().form("john", "smith")
+			.auth().basic("john", "smith")
 			.contentType("application/json")
 			.accept(MediaType.APPLICATION_JSON_VALUE).
 		when()
@@ -242,7 +242,7 @@ public class TraderControllerTest {
 	public void findTopFiveTradersByNumTrades() {
 		Response response = 
 				given()
-					.auth().form("john", "smith")
+					.auth().basic("john", "smith")
 					.contentType("application/json")
 					.accept(MediaType.APPLICATION_JSON_VALUE).
 				when()
@@ -260,7 +260,7 @@ public class TraderControllerTest {
 	public void findTopFiveTradersByVolume() {
 		Response response = 
 				given()
-					.auth().form("john", "smith")
+					.auth().basic("john", "smith")
 					.contentType("application/json")
 					.accept(MediaType.APPLICATION_JSON_VALUE).
 				when()
