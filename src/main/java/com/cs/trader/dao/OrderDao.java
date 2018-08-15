@@ -92,14 +92,15 @@ public class OrderDao {
 	
 	public ActivitySummary findActivitySummaryByTraderId(long traderId) {
 		String sql = "SELECT R.LATEST_ORDER, STATUS, ORDER_COUNT FROM (SELECT MAX(PLACEMENT_TIMESTAMP) AS LATEST_ORDER, TRADER_ID FROM ORDERS WHERE TRADER_ID = ?) R" + 
-				"INNER JOIN (SELECT COUNT(ORDER_ID) AS ORDER_COUNT, STATUS FROM ORDERS WHERE TRADER_ID = ? GROUP BY STATUS) WHERE R.TRADER_ID = TRADER_ID";
+				" INNER JOIN (SELECT COUNT(ORDER_ID) AS ORDER_COUNT, STATUS FROM ORDERS WHERE TRADER_ID = ? GROUP BY STATUS) WHERE R.TRADER_ID = TRADER_ID";
 		List<Map<String,Object>> rows = jdbcTemplate.queryForList(sql, traderId, traderId);
 		ActivitySummary summary = new ActivitySummary();
-		Map<String,Integer> orders = new HashMap<String, Integer>();
+		Map<String,Long> orders = new HashMap<String, Long>();
 		for (Map row : rows) {
 			summary.setLastOrderPlacement((Timestamp)row.get("LATEST_ORDER"));
-			orders.put(row.get("STATUS").toString(), (Integer)row.get("ORDER_COUNT"));
+			orders.put(row.get("STATUS").toString(), (Long)row.get("ORDER_COUNT"));
 		}
+		summary.setOrders(orders);
 		return summary;
 	}
 }
