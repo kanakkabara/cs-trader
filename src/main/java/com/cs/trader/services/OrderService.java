@@ -3,6 +3,7 @@ package com.cs.trader.services;
 import com.cs.trader.dao.OrderDao;
 import com.cs.trader.domain.Company;
 import com.cs.trader.domain.Order;
+import com.cs.trader.domain.OrderStatus;
 import com.cs.trader.domain.Trader;
 import com.cs.trader.exceptions.CompanyNotFoundException;
 import com.cs.trader.exceptions.InvalidFieldException;
@@ -11,6 +12,7 @@ import com.cs.trader.exceptions.UnauthorizedOperationsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.ws.rs.BadRequestException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -19,7 +21,6 @@ import java.util.List;
 public class OrderService {
 	final HashSet<String> instructionsSet = new HashSet<>(Arrays.asList("BUY", "SELL"));
 	final HashSet<String> orderTypesSet = new HashSet<>(Arrays.asList("LIMIT", "MARKET"));
-	public enum orderStatus {OPEN, CANCELLED, FULFILLED};
 
 	@Autowired
 	OrderDao orderDao;
@@ -75,7 +76,6 @@ public class OrderService {
 		return orderDao.findOrdersBySymbol(tickerSymbol);
 	}
 
-//	private String
 
 	public int cancelOrder(long orderId, long traderId) {
 		Order order = orderDao.findOrderByOrderId(orderId);
@@ -84,9 +84,11 @@ public class OrderService {
 			throw new UnauthorizedOperationsException("Trader does not have write access on the requested order");
 		}
 
-//		if(!order.getStatus().equals(orderStatus.OPEN.toString()))
+		if(!order.getStatus().equals(OrderStatus.OPEN.toString())){
+			throw new BadRequestException("Order is already fulfilled or cancelled");
+		}
 
-		return orderDao.setOrderStatus(orderId, orderStatus.CANCELLED.toString());
+		return orderDao.setOrderStatus(orderId, OrderStatus.CANCELLED.toString());
 	}
 	
 }
