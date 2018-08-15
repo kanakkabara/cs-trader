@@ -7,23 +7,41 @@ import org.springframework.stereotype.Service;
 
 import com.cs.trader.dao.CompanyDao;
 import com.cs.trader.domain.Company;
-import com.cs.trader.domain.Sector;
 
 @Service
 public class CompanyService {
 	@Autowired
-	CompanyDao companyDao; 
+    private CompanyDao companyDao;
 	
 	public List<Company> findAllCompanies(){
 		return companyDao.findAllCompanies();
 	}
-	
+
+	public Company findCompanyByID(int id) {
+		return companyDao.findCompanyByID(id);
+	}
+
+	public List<Company> findAllCompaniesStartingWith(String startsWith) {
+		return companyDao.findAllCompaniesStartingWith(startsWith);
+	}
+
 	public List<Company> findAllCompaniesBySectorID(int id){
 		return companyDao.findAllCompaniesBySectorID(id);
 	}
 
-//	public Company addNewCompany(Company company) {
-//		return companyDao.save(company);
-//	}
-//	
+	public Company validateCompanyByTicker(String ticker){
+		return companyDao.validateTicker(ticker);
+	}
+
+	public int addNewCompany(Company company) {
+		return companyDao.addNewCompany(company);
+	}
+
+	public int deleteCompany(int companyID){
+		return companyDao.deleteCompany(companyID);
+	}
+
+	public Company updateCompany(int id, Company company) {
+		return companyDao.updateCompany(id, company);
+	}
 }

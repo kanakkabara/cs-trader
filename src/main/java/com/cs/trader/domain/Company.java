@@ -1,21 +1,21 @@
 package com.cs.trader.domain;
 
 public class Company {
-	int companyID;
-	String companyName;
-	String ticker;
-	Sector sector; 
-	
+	private int companyID;
+	private String companyName;
+	private String ticker;
+	private int sectorID;
+
 	public Company() {
 		super();
 	}
 
-	public Company(int companyID, String companyName, String ticker, Sector sector) {
+	public Company(int companyID, String companyName, String ticker, int sectorID) {
 		super();
 		this.companyID = companyID;
 		this.companyName = companyName;
 		this.ticker = ticker;
-		this.sector = sector;
+		this.sectorID = sectorID;
 	}
 
 	public int getCompanyID() {
@@ -42,11 +42,11 @@ public class Company {
 		this.ticker = ticker;
 	}
 
-	public Sector getSector() {
-		return sector;
+	public int getSectorID() {
+		return sectorID;
 	}
 
-	public void setSector(Sector sector) {
-		this.sector = sector;
+	public void setSectorID(int sectorID) {
+		this.sectorID = sectorID;
 	}
 }

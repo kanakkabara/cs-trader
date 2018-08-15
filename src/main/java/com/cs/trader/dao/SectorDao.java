@@ -14,19 +14,18 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
-import com.cs.trader.domain.Company;
 import com.cs.trader.domain.Sector;
-import com.cs.trader.exceptions.RecordNotFoundException;
+import com.cs.trader.exceptions.SectorNotFoundException;
 import com.cs.trader.exceptions.SectorHasValidCompanies;
 import com.cs.trader.services.CompanyService;
 
 @Repository
 public class SectorDao {
 	@Autowired
-	JdbcTemplate jdbc;
+	private JdbcTemplate jdbc;
 	
 	@Autowired
-	CompanyService companyService;
+	private CompanyService companyService;
 	
 	public List<Sector> findAllSectors(){
 		return jdbc.query("SELECT s.SECTOR_ID, SECTOR_NAME, SECTOR_DESCRIPTION, COUNT(*) as COMPANY_COUNT FROM SECTORS s, COMPANIES c WHERE s.SECTOR_ID = c.SECTOR_ID GROUP BY s.SECTOR_ID", new SectorRowMapper());
@@ -37,7 +36,7 @@ public class SectorDao {
 			Sector s = jdbc.queryForObject("select * from sectors where SECTOR_ID = ?", new SectorRowMapper(), id);
 			return new Sector(s, companyService.findAllCompaniesBySectorID(id));
 		}catch(Exception e) {
-			throw new RecordNotFoundException("Could not find a sector with Sector ID["+id+"]");
+			throw new SectorNotFoundException("Could not find a sector with Sector ID["+id+"]");
 		}
 	}
 	
@@ -60,7 +59,7 @@ public class SectorDao {
 		try {
 			findSectorByID(sectorID);
 		}catch(Exception e) {
-			throw new RecordNotFoundException("Could not find a sector with Sector ID["+sectorID+"]");
+			throw new SectorNotFoundException("Could not find a sector with Sector ID["+sectorID+"]");
 		}
 		
 		int rows = jdbc.update(new PreparedStatementCreator() {
@@ -74,17 +73,14 @@ public class SectorDao {
 		});
 		
 		if(rows != 0) return findSectorByID(sectorID);
-		else{
-			throw new RuntimeException("Internal Server Error");
-		}
+		else throw new RuntimeException("Internal Server Error");
+
 	}
 	
 	public int deleteSector(int sectorID){
 		int numberOfCompanies = companyService.findAllCompaniesBySectorID(sectorID).size();
 		if(numberOfCompanies == 0) {
-			String sql = "DELETE FROM SECTORS WHERE SECTOR_ID = ?";
-			int status = jdbc.update(sql, new Object[] {sectorID});
-			return status;
+			return jdbc.update("DELETE FROM SECTORS WHERE SECTOR_ID = ?", new Object[] {sectorID});
 		}else {
 			throw new SectorHasValidCompanies("Sector ID["+sectorID+"] has some valid companies, cannot perform delete operation!");
 		}

@@ -2,6 +2,7 @@ package com.cs.trader.controllers;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +18,7 @@ import com.cs.trader.services.SectorService;
 @RestController
 public class SectorController {
 	@Autowired
-	SectorService sectorService;
+	private SectorService sectorService;
 	
 	@GetMapping("/sectors")
 	public List<Sector> findAllSectors(){

@@ -1,14 +1,19 @@
 package com.cs.trader.domain;
 
-import java.util.ArrayList;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.util.List;
 
 public class Sector {
-	int sectorID;
-	String sectorName;
-	String sectorDesc;
-	int companyCount; 
-	List<Company> companies = new ArrayList<Company>();
+	private int sectorID;
+	private String sectorName;
+	private String sectorDesc;
+
+	@JsonInclude(JsonInclude.Include.NON_DEFAULT)
+	private int companyCount;
+
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private List<Company> companies;
 	
 	public List<Company> getCompanies() {
 		return companies;
@@ -59,6 +64,7 @@ public class Sector {
 		this.sectorID = sectorID;
 		this.sectorName = sectorName;
 		this.sectorDesc = sectorDesc;
+		this.companies = null;
 	}
 
 	public Sector(int sectorID, String sectorName, String sectorDesc, int companyCount) {
@@ -67,6 +73,7 @@ public class Sector {
 		this.sectorName = sectorName;
 		this.sectorDesc = sectorDesc;
 		this.companyCount = companyCount;
+		this.companies = null;
 	}
 
 	public Sector(Sector copy, List<Company> companies) {
