@@ -30,7 +30,8 @@ public class CompanyService {
 	}
 
 	public Company validateCompanyByTicker(String ticker){
-		return companyDao.validateTicker(ticker);
+//		return companyDao.validateTicker(ticker);
+		return null;
 	}
 
 	public int addNewCompany(Company company) {

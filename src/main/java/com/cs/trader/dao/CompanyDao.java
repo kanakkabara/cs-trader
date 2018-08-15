@@ -48,7 +48,7 @@ public class CompanyDao {
 
 	public Company validateTicker(String tickerToValidate) {
 		try {
-			return jdbc.queryForObject("SELECT * FROM COMPANIES c WHERE c.TICKER_SYMBOL = ?", new CompanyRowMapper(), tickerToValidate);
+			return jdbc.queryForObject("SELECT * FROM COMPANIES c WHERE c.TICKER_SYMBOL LIKE ?", new CompanyRowMapper(), tickerToValidate);
 		} catch(DataAccessException e){
 			throw new CompanyNotFoundException("No company could be found with ticker symbol = "+tickerToValidate);
 		}
