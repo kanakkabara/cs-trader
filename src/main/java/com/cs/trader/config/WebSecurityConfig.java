@@ -29,7 +29,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		  .usersByUsernameQuery(
 		   "SELECT USERNAME,PASSWORD,ENABLED FROM USERS WHERE USERNAME=?")
 		  .authoritiesByUsernameQuery(
-		   "SELECT USERS.USERNAME,USER_ROLE AUTHORITIES FROM USER_ROLES,USERS WHERE USER_ROLES.USERNAME = USERS.USERNAME AND USERS.USERNAME=?")
+		   "SELECT USERS.USERNAME,USER_ROLE AUTHORITY FROM USER_ROLES,USERS " + 
+				  "WHERE USER_ROLES.USERNAME = USERS.USERNAME AND USERS.USERNAME=?")
 		  .passwordEncoder(NoOpPasswordEncoder.getInstance());
 	}
 	
@@ -41,7 +42,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			//	.and()
 			.authorizeRequests()
 			.antMatchers("/h2/**").permitAll()
-			.antMatchers("/traders/*").authenticated()
+			.antMatchers("/traders/*").hasAuthority("USER")//authenticated()//
 			.anyRequest().authenticated()
 			  .and()
 		    .formLogin().usernameParameter("username").passwordParameter("password")
