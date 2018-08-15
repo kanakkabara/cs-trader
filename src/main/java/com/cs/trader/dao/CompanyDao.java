@@ -21,6 +21,7 @@ import org.springframework.stereotype.Repository;
 
 import com.cs.trader.domain.Company;
 import com.cs.trader.domain.Sector;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class CompanyDao {
@@ -53,7 +54,7 @@ public class CompanyDao {
 			throw new CompanyNotFoundException("No company could be found with ticker symbol = "+tickerToValidate);
 		}
 	}
-	
+
 	public Company findCompanyByID(int id){
 		try {
 			return jdbc.queryForObject("SELECT * FROM COMPANIES c, SECTORS s WHERE c.SECTOR_ID=s.SECTOR_ID AND COMPANY_ID = ?", new CompanyRowMapper(), id);
@@ -62,6 +63,7 @@ public class CompanyDao {
 		}
 	}
 
+	@Transactional
 	public int addNewCompany(Company company) {
 		sectorService.findSectorByID(company.getSectorID());
 
@@ -80,6 +82,7 @@ public class CompanyDao {
 		return holder.getKey().intValue();
 	}
 
+	@Transactional
 	public int deleteCompany(int companyID){
 		int ordersForCompany = orderService.retrieveOrdersByCompany(findCompanyByID(companyID)).size();
 		if(ordersForCompany == 0) {
@@ -89,6 +92,7 @@ public class CompanyDao {
 		}
 	}
 
+	@Transactional
 	public Company updateCompany(int companyID, Company newCompany){
 		Company oldComp = findCompanyByID(companyID);
 
