@@ -46,14 +46,14 @@ public class TraderDaoTest {
 	
 	@Test
 	public void addTrader() {
-		Trader trader = new Trader("John","Smith","johns@gmail.com","6590003213","Sentosa");
+		Trader trader = new Trader("John","Smith","johns@gmail.com","6590003213","Sentosa","johnny");
 		int status = dao.addTrader(trader);
 		assertTrue("Row not inserted successfully",status == 1);
 	}
 	
 	@Test(expected = InvalidFieldException.class)
 	public void addTraderWithInvalidFields() {
-		Trader trader = new Trader("John",null,"johns@gmail.com","6590003213","Sentosa");
+		Trader trader = new Trader("John","Smith","johns@gmail.com","6590003213","Sentosa","johnny");
 		int status = dao.addTrader(trader);
 	}
 	

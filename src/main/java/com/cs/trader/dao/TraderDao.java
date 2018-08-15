@@ -22,11 +22,11 @@ public class TraderDao {
 	private JdbcTemplate jdbcTemplate;
 	
 	public int addTrader(Trader trader) {
-		String sql = "INSERT INTO TRADERS (FIRST_NAME, LAST_NAME, EMAIL, PHONE, ADDRESS) VALUES(?,?,?,?,?)";
+		String sql = "INSERT INTO TRADERS (FIRST_NAME, LAST_NAME, EMAIL, PHONE, ADDRESS, USERNAME) VALUES(?,?,?,?,?,?)";
 		try {
 			int status = jdbcTemplate.update(sql,
 					new Object[] { trader.getFirstName(), trader.getLastName(), trader.getEmail(), 
-							trader.getPhone(), trader.getAddress()});
+							trader.getPhone(), trader.getAddress(), trader.getUsername()});
 			return status;
 		}catch(DataIntegrityViolationException ex) {
 			throw new InvalidFieldException("Invalid fields, please check again.");
@@ -112,6 +112,7 @@ public class TraderDao {
 		trader.setEmail(rs.getString("EMAIL"));
 		trader.setPhone(rs.getString("PHONE"));
 		trader.setAddress(rs.getString("ADDRESS"));
+		trader.setUsername(rs.getString("USERNAME"));
 		return trader;
 	}
 	

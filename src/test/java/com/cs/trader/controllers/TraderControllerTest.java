@@ -137,6 +137,8 @@ public class TraderControllerTest {
 		jsonAsMap.put("email", "adam@gmail.com");
 		jsonAsMap.put("phone", "6592345678");
 		jsonAsMap.put("address", "Mayhem");
+		jsonAsMap.put("username", "adam");
+		jsonAsMap.put("password", "appuru");
 		
 		ResponseBody body = 
 			given()
@@ -162,6 +164,8 @@ public class TraderControllerTest {
 		jsonAsMap.put("email", null);
 		jsonAsMap.put("phone", "6592345678");
 		jsonAsMap.put("address", "Mayhem");
+		jsonAsMap.put("username", "adam");
+		jsonAsMap.put("password", "appuru");
 		
 		given()
 			.auth().form("john", "smith")
@@ -178,7 +182,9 @@ public class TraderControllerTest {
 	public void findOrdersByTraderIdRequest() {
 		Response response = 
 			given()
+				//.auth().basic("john", "smith")
 				.auth().form("john", "smith")
+				.contentType("application/json")
 				.accept(MediaType.APPLICATION_JSON_VALUE).
 			when()
 				.get("/traders/1/orders").
@@ -194,6 +200,7 @@ public class TraderControllerTest {
 	public void findOrdersByInvalidTraderIdRequest() {
 		given()
 			.auth().form("john", "smith")
+			.contentType("application/json")
 			.accept(MediaType.APPLICATION_JSON_VALUE).
 		when()
 			.get("/traders/999/orders").
@@ -206,6 +213,7 @@ public class TraderControllerTest {
 		Response response = 
 				given()
 					.auth().form("john", "smith")
+					.contentType("application/json")
 					.accept(MediaType.APPLICATION_JSON_VALUE).
 				when()
 					.get("/traders/1/activitysummary").
@@ -222,6 +230,7 @@ public class TraderControllerTest {
 	public void findActivitySummaryByInvalidTraderIdRequest() {
 		given()
 			.auth().form("john", "smith")
+			.contentType("application/json")
 			.accept(MediaType.APPLICATION_JSON_VALUE).
 		when()
 			.get("/traders/999/activitysummary").
@@ -234,6 +243,7 @@ public class TraderControllerTest {
 		Response response = 
 				given()
 					.auth().form("john", "smith")
+					.contentType("application/json")
 					.accept(MediaType.APPLICATION_JSON_VALUE).
 				when()
 					.get("/traders/topbynumtrades").
@@ -251,6 +261,7 @@ public class TraderControllerTest {
 		Response response = 
 				given()
 					.auth().form("john", "smith")
+					.contentType("application/json")
 					.accept(MediaType.APPLICATION_JSON_VALUE).
 				when()
 					.get("/traders/topbyvolume").

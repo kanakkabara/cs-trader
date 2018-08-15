@@ -45,7 +45,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/traders/*").hasAuthority("USER")//authenticated()//
 			.anyRequest().authenticated()
 			  .and()
-		    .formLogin().usernameParameter("username").passwordParameter("password")
+		    .httpBasic()//.formLogin().usernameParameter("username").passwordParameter("password")
 			  .and()
 			  .csrf().disable()
 				.headers().frameOptions().disable();

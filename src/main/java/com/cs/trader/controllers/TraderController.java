@@ -57,6 +57,7 @@ public class TraderController {
 	public List<TraderRank> findTopFiveTradersByNumTrades(){
 		return service.findTopFiveTradersByNumTrades();
 	}
+	
 	@GetMapping(value="/traders/topbyvolume", produces= {MediaType.APPLICATION_JSON_VALUE})
 	public List<TraderRank> findTopFiveTradersByVolume(){
 		return service.findTopFiveTradersByVolume();
