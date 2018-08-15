@@ -69,7 +69,6 @@ public class TraderDaoTest {
 		Trader firstTrader = traders.get(0).getTrader();
 		System.out.println(traders);
 		assertTrue(firstTrader.getFirstName().equals("Ernest"));
-		//more assert statements
 	}
 	
 	@Test
@@ -78,7 +77,6 @@ public class TraderDaoTest {
 		Trader firstTrader = traders.get(0).getTrader();
 		System.out.println(traders);
 		assertTrue(firstTrader.getFirstName().equals("Ernest"));
-		//more assert statements
 	}
 	
 }

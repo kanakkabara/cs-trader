@@ -15,6 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.cs.trader.domain.ActivitySummary;
 import com.cs.trader.domain.Order;
 import com.cs.trader.domain.Trader;
+import com.cs.trader.domain.TraderRank;
 import com.cs.trader.exceptions.InvalidFieldException;
 import com.cs.trader.exceptions.TraderNotFoundException;
 import com.cs.trader.exceptions.TraderStillWorkingException;
@@ -98,6 +99,22 @@ public class TraderServiceTest {
 	public void findOrdersByInvalidTraderId() {
 		List<Order> orders = service.findOrdersByTraderId(999);
 		System.out.println(orders);
+	}
+	
+	@Test
+	public void findTopFiveTradersByNumTrades() {
+		List<TraderRank> traders = service.findTopFiveTradersByNumTrades();
+		Trader firstTrader = traders.get(0).getTrader();
+		System.out.println(traders);
+		assertTrue(firstTrader.getFirstName().equals("Ernest"));
+	}
+	
+	@Test
+	public void findTopFiveTradersByVolume() {
+		List<TraderRank> traders = service.findTopFiveTradersByVolume();
+		Trader firstTrader = traders.get(0).getTrader();
+		System.out.println(traders);
+		assertTrue(firstTrader.getFirstName().equals("Ernest"));
 	}
 	
 }
