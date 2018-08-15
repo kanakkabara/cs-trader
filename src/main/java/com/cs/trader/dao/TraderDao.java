@@ -36,6 +36,9 @@ public class TraderDao {
 	public int deleteTrader(long id) {
 		String sql = "DELETE FROM TRADERS WHERE TRADER_ID = ?";
 		int status = jdbcTemplate.update(sql, new Object[] {id});
+		if(status == 0) {
+			throw new TraderNotFoundException("Trader with id " + id + " can't be found.");
+		}
 		return status;
 	}
 	

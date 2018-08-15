@@ -26,6 +26,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.cs.trader.domain.ActivitySummary;
 import com.cs.trader.domain.Order;
 import com.cs.trader.domain.Trader;
+import com.cs.trader.domain.TraderRank;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
@@ -226,5 +227,39 @@ public class TraderControllerTest {
 			.get("/traders/999/activitysummary").
 		then()
 			.statusCode(HttpStatus.SC_BAD_REQUEST);
+	}
+	
+	@Test
+	public void findTopFiveTradersByNumTrades() {
+		Response response = 
+				given()
+					.auth().basic("john", "smith")
+					.accept(MediaType.APPLICATION_JSON_VALUE).
+				when()
+					.get("/traders/topbynumtrades").
+				then()
+					.statusCode(HttpStatus.SC_OK).
+				and()
+					.extract().response();
+		TraderRank[] traders = response.as(TraderRank[].class);
+		Trader trader = traders[0].getTrader();
+		assertTrue("Top 5 traders by number of trades is incorrect.",trader.getFirstName().equals("Ernest"));
+	}
+	
+	@Test
+	public void findTopFiveTradersByVolume() {
+		Response response = 
+				given()
+					.auth().basic("john", "smith")
+					.accept(MediaType.APPLICATION_JSON_VALUE).
+				when()
+					.get("/traders/topbyvolume").
+				then()
+					.statusCode(HttpStatus.SC_OK).
+				and()
+					.extract().response();
+		TraderRank[] traders = response.as(TraderRank[].class);
+		Trader trader = traders[0].getTrader();
+		assertTrue("Top 5 traders by volume is incorrect.",trader.getFirstName().equals("Ernest"));
 	}
 }
