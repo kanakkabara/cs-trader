@@ -65,8 +65,6 @@ public class CompanyDao {
 
 	@Transactional
 	public int addNewCompany(Company company) {
-		sectorService.findSectorByID(company.getSectorID());
-
 		GeneratedKeyHolder holder = new GeneratedKeyHolder();
 		jdbc.update(new PreparedStatementCreator() {
 			@Override
@@ -84,33 +82,24 @@ public class CompanyDao {
 
 	@Transactional
 	public int deleteCompany(int companyID){
-		int ordersForCompany = orderService.retrieveOrdersByCompany(findCompanyByID(companyID)).size();
-		if(ordersForCompany == 0) {
-			return jdbc.update("DELETE FROM COMPANIES WHERE COMPANY_ID = ?", new Object[] {companyID});
-		}else {
-			throw new CompanyHasExistingOrdersException("Company ID["+companyID+"] has some valid orders, cannot perform delete operation!");
-		}
+		return jdbc.update("DELETE FROM COMPANIES WHERE COMPANY_ID = ?", new Object[] {companyID});
 	}
 
 	@Transactional
-	public Company updateCompany(int companyID, Company newCompany){
-		Company oldComp = findCompanyByID(companyID);
-
-		int newSectorID = newCompany.getSectorID() == 0 ? oldComp.getSectorID() : sectorService.findSectorByID(newCompany.getSectorID()).getSectorID();
-
+	public Company updateCompany(Company newCompany){
 		int rows = jdbc.update(new PreparedStatementCreator() {
 			@Override
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
 				PreparedStatement statement = con.prepareStatement("UPDATE COMPANIES SET TICKER_SYMBOL=?, COMPANY_NAME=?, SECTOR_ID=? WHERE COMPANY_ID=?; \n", Statement.RETURN_GENERATED_KEYS);
-				statement.setString(1, newCompany.getTicker() == null ? oldComp.getTicker() : newCompany.getTicker());
-				statement.setString(2, newCompany.getCompanyName() == null ? oldComp.getCompanyName() : newCompany.getCompanyName());
-				statement.setInt(3, newSectorID);
-				statement.setInt(4, companyID);
+				statement.setString(1, newCompany.getTicker());
+				statement.setString(2, newCompany.getCompanyName());
+				statement.setInt(3, newCompany.getSectorID());
+				statement.setInt(4, newCompany.getCompanyID());
 				return statement;
 			}
 		});
 
-		if(rows != 0) return findCompanyByID(companyID);
+		if(rows != 0) return findCompanyByID(newCompany.getCompanyID());
 		else throw new RuntimeException("Internal Server Error");
 	}
 
