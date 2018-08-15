@@ -1,16 +1,7 @@
 package com.cs.trader.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
-import java.sql.Types;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.cs.trader.domain.ActivitySummary;
+import com.cs.trader.domain.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -19,15 +10,17 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import com.cs.trader.domain.ActivitySummary;
-import com.cs.trader.domain.Order;
+import java.sql.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 public class OrderDao {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 	
-	public long addOrder(String symbol, String instruction, String type, Double price, int volume, long traderId) {
+	public long addOrder(Order order) {
 		String insertSql = "INSERT INTO ORDERS(SYMBOL, INSTRUCTION, ORDER_TYPE, PRICE, VOLUME, "
 				+ "PLACEMENT_TIMESTAMP, TRADER_ID, STATUS, DELETED) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);";
 		KeyHolder key = new GeneratedKeyHolder();
@@ -36,17 +29,17 @@ public class OrderDao {
 		      public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
 		        final PreparedStatement ps = connection.prepareStatement(insertSql, 
 		            Statement.RETURN_GENERATED_KEYS);
-		        ps.setString(1, symbol);
-		        ps.setString(2, instruction);
-		        ps.setString(3, type);
-		        if(price == null) {
+		        ps.setString(1, order.getSymbol());
+		        ps.setString(2, order.getInstruction());
+		        ps.setString(3, order.getOrderType());
+		        if(order.getPrice() == null) {
 		        	ps.setNull(4, Types.DOUBLE);
 		        } else {
-		        	ps.setDouble(4, price);
+		        	ps.setDouble(4, order.getPrice());
 		        }
-		        ps.setInt(5, volume);
+		        ps.setInt(5, order.getVolume());
 		        ps.setTimestamp(6, Timestamp.from(java.time.Instant.now()));
-		        ps.setLong(7, traderId);
+		        ps.setLong(7, order.getTraderId());
 		        ps.setString(8, "OPEN");
 		        ps.setBoolean(9, false);
 		        return ps;
@@ -89,9 +82,9 @@ public class OrderDao {
 			return order;
 		}
 	}
-	
+
 	public ActivitySummary findActivitySummaryByTraderId(long traderId) {
-		String sql = "SELECT R.LATEST_ORDER, STATUS, ORDER_COUNT FROM (SELECT MAX(PLACEMENT_TIMESTAMP) AS LATEST_ORDER, TRADER_ID FROM ORDERS WHERE TRADER_ID = ?) R" + 
+		String sql = "SELECT R.LATEST_ORDER, STATUS, ORDER_COUNT FROM (SELECT MAX(PLACEMENT_TIMESTAMP) AS LATEST_ORDER, TRADER_ID FROM ORDERS WHERE TRADER_ID = ?) R" +
 				" INNER JOIN (SELECT COUNT(ORDER_ID) AS ORDER_COUNT, STATUS FROM ORDERS WHERE TRADER_ID = ? GROUP BY STATUS) WHERE R.TRADER_ID = TRADER_ID";
 		List<Map<String,Object>> rows = jdbcTemplate.queryForList(sql, traderId, traderId);
 		ActivitySummary summary = new ActivitySummary();

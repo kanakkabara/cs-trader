@@ -14,15 +14,13 @@ public class Order {
 	private String status;
 	private boolean deleted;
 	
-	public Order(String symbol, String instruction, String orderType, Double price, int volume,
-			Date placementTimestamp, long traderId) {
+	public Order(String symbol, String instruction, String orderType, Double price, int volume, long traderId) {
 		super();
 		this.symbol = symbol;
 		this.instruction = instruction;
 		this.orderType = orderType;
 		this.price = price;
 		this.volume = volume;
-		this.placementTimestamp = placementTimestamp;
 		this.traderId = traderId;
 	}
 	
