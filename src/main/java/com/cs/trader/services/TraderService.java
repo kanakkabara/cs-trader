@@ -10,6 +10,7 @@ import com.cs.trader.dao.TraderDao;
 import com.cs.trader.domain.ActivitySummary;
 import com.cs.trader.domain.Order;
 import com.cs.trader.domain.Trader;
+import com.cs.trader.domain.TraderRank;
 import com.cs.trader.exceptions.TraderStillWorkingException;
 
 @Service
@@ -53,6 +54,16 @@ public class TraderService {
 	public List<Order> findOrdersByTraderId(long id) {
 		List<Order> orders = orderDao.findOrderByTraderId(id);
 		return orders;
+	}
+	
+	public List<TraderRank> findTopFiveTradersByNumTrades(){
+		List<TraderRank> traders = traderDao.findTopFiveTradersByNumTrades();
+		return traders;
+	}
+	
+	public List<TraderRank> findTopFiveTradersByVolume(){
+		List<TraderRank> traders = traderDao.findTopFiveTradersByNumTrades();
+		return traders;
 	}
 	
 }

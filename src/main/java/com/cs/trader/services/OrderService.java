@@ -3,7 +3,10 @@ package com.cs.trader.services;
 import com.cs.trader.dao.OrderDao;
 import com.cs.trader.domain.Company;
 import com.cs.trader.domain.Order;
+import com.cs.trader.domain.Trader;
+import com.cs.trader.exceptions.CompanyNotFoundException;
 import com.cs.trader.exceptions.InvalidFieldException;
+import com.cs.trader.exceptions.TraderNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,33 +21,43 @@ public class OrderService {
 
 	@Autowired
 	OrderDao orderDao;
+
+	@Autowired
 	TraderService traderService;
 
-	public long placeNewOrder(String symbol, String instruction, String type, Double price, int volume, long traderId) {
-		String normalizedInstr = instruction.toUpperCase();
-		if(!instructionsSet.contains(normalizedInstr)) {
+	@Autowired
+	CompanyService companyService;
+
+	public long placeNewOrder(Order order) {
+		if(!instructionsSet.contains(order.getInstruction())) {
 			throw new InvalidFieldException("Invalid value for 'instruction' field");
 		}
 
-		String normalizedType = type.toUpperCase();
-		if(!orderTypesSet.contains(normalizedType)) {
+		if(!orderTypesSet.contains(order.getOrderType())) {
 			throw new InvalidFieldException("Invalid value for 'type' field");
 		}
 
-		if(price != null && price <= 0) {
+		if((order.getOrderType().equals("MARKET") && order.getPrice() != null ) ||
+				(order.getOrderType().equals("LIMIT") && (order.getPrice() == null || order.getPrice() <= 0))) {
 			throw new InvalidFieldException("Invalid value for 'price' field");
 		}
 
-		if(volume <= 0) {
+		if(order.getVolume() <= 0) {
 			throw new InvalidFieldException("Invalid value for 'volume' field");
 		}
-//		try {
-//			Trader trader = traderService.findTraderById(traderId);
-//		} catch (TraderNotFoundException ex) {
-//			throw new InvalidFieldException("Invalid value for 'traderId' field");
-//		}
 
-		return orderDao.addOrder(symbol, normalizedInstr, normalizedType, price, volume, traderId);
+		try {
+			Company company = companyService.validateCompanyByTicker(order.getSymbol());
+			Trader trader = traderService.findTraderById(order.getTraderId());
+		} catch (TraderNotFoundException ex) {
+			throw new InvalidFieldException("Invalid value for 'traderId' field");
+		} catch (CompanyNotFoundException ex) {
+			throw new InvalidFieldException("Invalid value for 'symbol' field");
+		}
+
+
+		// TODO: *fel* update transaction log
+		return orderDao.addOrder(order);
 	}
 
 	public List<Order> retrieveOrdersByTrader(long traderId) {

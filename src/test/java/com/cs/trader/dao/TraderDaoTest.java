@@ -13,6 +13,7 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.cs.trader.domain.Trader;
+import com.cs.trader.domain.TraderRank;
 import com.cs.trader.exceptions.InvalidFieldException;
 import com.cs.trader.exceptions.TraderNotFoundException;
 
@@ -28,16 +29,13 @@ public class TraderDaoTest {
 	@Test
 	public void findAllTraders() {
 		List<Trader> traders = dao.findTraders();
-		for(Trader t : traders) {
-			System.out.println(t);
-		}
 		assertTrue("Number of users found is incorrect.",traders.size() == 3);
 	}
 	
 	@Test
 	public void findTraderById() {
-		Trader trader = dao.findTraderById(2);
-		assertTrue(trader.getFirstName(), "Kevin".equals(trader.getFirstName()));
+		Trader trader = dao.findTraderById(1);
+		assertTrue(trader.getFirstName(), "Ernest".equals(trader.getFirstName()));
 	}
 	
 	
@@ -61,8 +59,24 @@ public class TraderDaoTest {
 	
 	@Test
 	public void deleteTrader() {
-		int status = dao.deleteTrader(1);
+		int status = dao.deleteTrader(2);
 		assertTrue("Row not deleted successfully", status == 1);
+	}
+	
+	@Test
+	public void findTopFiveTradersByNumTrades() {
+		List<TraderRank> traders = dao.findTopFiveTradersByNumTrades();
+		Trader firstTrader = traders.get(0).getTrader();
+		System.out.println(traders);
+		assertTrue(firstTrader.getFirstName().equals("Ernest"));
+	}
+	
+	@Test
+	public void findTopFiveTradersByVolume() {
+		List<TraderRank> traders = dao.findTopFiveTradersByVolume();
+		Trader firstTrader = traders.get(0).getTrader();
+		System.out.println(traders);
+		assertTrue(firstTrader.getFirstName().equals("Ernest"));
 	}
 	
 }

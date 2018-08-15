@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cs.trader.domain.ActivitySummary;
 import com.cs.trader.domain.Order;
 import com.cs.trader.domain.Trader;
+import com.cs.trader.domain.TraderRank;
 import com.cs.trader.services.TraderService;
 
 @RestController
@@ -43,13 +44,25 @@ public class TraderController {
 	}
 	
 	@GetMapping(value="/traders/{id}/orders", produces= {MediaType.APPLICATION_JSON_VALUE})
-	public List<Order> getOrdersByTraderId(@PathVariable(value="id") long id){
+	public List<Order> findOrdersByTraderId(@PathVariable(value="id") long id){
 		return service.findOrdersByTraderId(id);
 	}
 	
 	@GetMapping(value="/traders/{id}/activitysummary", produces= {MediaType.APPLICATION_JSON_VALUE})
-	public ActivitySummary getActivitySummaryByTraderId(@PathVariable(value="id") long id){
+	public ActivitySummary findActivitySummaryByTraderId(@PathVariable(value="id") long id){
 		return service.findActivitySummaryByTraderId(id);
 	}
+	
+	@GetMapping(value="/traders/topbynumtrades", produces= {MediaType.APPLICATION_JSON_VALUE})
+	public List<TraderRank> findTopFiveTradersByNumTrades(){
+		return service.findTopFiveTradersByNumTrades();
+	}
+	@GetMapping(value="/traders/topbyvolume", produces= {MediaType.APPLICATION_JSON_VALUE})
+	public List<TraderRank> findTopFiveTradersByVolume(){
+		return service.findTopFiveTradersByVolume();
+	}
+	
+	
+	
 	
 }

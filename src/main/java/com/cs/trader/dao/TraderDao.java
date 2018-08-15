@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import com.cs.trader.domain.Trader;
+import com.cs.trader.domain.TraderRank;
 import com.cs.trader.exceptions.InvalidFieldException;
 import com.cs.trader.exceptions.TraderNotFoundException;
 
@@ -35,6 +36,9 @@ public class TraderDao {
 	public int deleteTrader(long id) {
 		String sql = "DELETE FROM TRADERS WHERE TRADER_ID = ?";
 		int status = jdbcTemplate.update(sql, new Object[] {id});
+		if(status == 0) {
+			throw new TraderNotFoundException("Trader with id " + id + " can't be found.");
+		}
 		return status;
 	}
 	
@@ -53,20 +57,63 @@ public class TraderDao {
 		}
 	}
 	
+	public List<TraderRank> findTopFiveTradersByNumTrades() {
+		String sql = "SELECT TOP 5 COUNT(ORDER_ID) NUM_ORDERS, TRADERS.* " + 
+				"FROM TRADERS " + 
+				"LEFT OUTER JOIN ORDERS ON TRADERS.TRADER_ID = ORDERS.TRADER_ID " + 
+				"GROUP BY TRADERS.TRADER_ID " + 
+				"ORDER BY NUM_ORDERS DESC";
+		return jdbcTemplate.query(sql,
+				new TraderRankRowMapperNumTrades());
+	}
+	
+	public List<TraderRank> findTopFiveTradersByVolume() {
+		String sql = "SELECT TOP 5 ISNULL(SUM(VOLUME), 0) VOLUME, TRADERS.* " + 
+				"FROM TRADERS " + 
+				"LEFT OUTER JOIN ORDERS ON TRADERS.TRADER_ID = ORDERS.TRADER_ID " + 
+				"GROUP BY TRADERS.TRADER_ID " + 
+				"ORDER BY VOLUME DESC";
+		return jdbcTemplate.query(sql,
+				new TraderRankRowMapperVolume());
+	}
+	
+	
 	class TraderRowMapper implements RowMapper<Trader>{
 		@Override
 		public Trader mapRow(ResultSet rs, int rowNum) throws SQLException {
-			Trader trader = new Trader();
-			trader.setTraderId(rs.getInt("TRADER_ID"));
-			trader.setFirstName(rs.getString("FIRST_NAME"));
-			trader.setLastName(rs.getString("LAST_NAME"));
-			trader.setEmail(rs.getString("EMAIL"));
-			trader.setPhone(rs.getString("PHONE"));
-			trader.setAddress(rs.getString("ADDRESS"));
+			Trader trader = TraderDao.mapRow(rs, rowNum);
 			return trader;
 		}
 	}
 	
+	class TraderRankRowMapperVolume implements RowMapper<TraderRank>{
+		@Override
+		public TraderRank mapRow(ResultSet rs, int rowNum) throws SQLException {
+			Trader trader = TraderDao.mapRow(rs, rowNum);
+			TraderRank traderRank = new TraderRank(trader, rs.getLong("VOLUME"));
+			return traderRank;
+		}
+	}
+	
+	class TraderRankRowMapperNumTrades implements RowMapper<TraderRank>{
+		@Override
+		public TraderRank mapRow(ResultSet rs, int rowNum) throws SQLException {
+			Trader trader = TraderDao.mapRow(rs, rowNum);
+			TraderRank traderRank = new TraderRank(trader, rs.getLong("NUM_ORDERS"));
+			return traderRank;
+		}
+	}
+	
+	private static Trader mapRow(ResultSet rs, int rowNum) throws SQLException {
+		Trader trader = new Trader();
+		trader.setTraderId(rs.getLong("TRADER_ID"));
+		trader.setFirstName(rs.getString("FIRST_NAME"));
+		trader.setLastName(rs.getString("LAST_NAME"));
+		trader.setEmail(rs.getString("EMAIL"));
+		trader.setPhone(rs.getString("PHONE"));
+		trader.setAddress(rs.getString("ADDRESS"));
+		return trader;
+	}
 	
 	
 	

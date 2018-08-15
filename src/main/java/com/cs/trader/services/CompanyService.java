@@ -1,12 +1,11 @@
 package com.cs.trader.services;
 
-import java.util.List;
-
+import com.cs.trader.dao.CompanyDao;
+import com.cs.trader.domain.Company;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cs.trader.dao.CompanyDao;
-import com.cs.trader.domain.Company;
+import java.util.List;
 
 @Service
 public class CompanyService {
@@ -30,8 +29,7 @@ public class CompanyService {
 	}
 
 	public Company validateCompanyByTicker(String ticker){
-//		return companyDao.validateTicker(ticker);
-		return null;
+		return companyDao.validateTicker(ticker);
 	}
 
 	public int addNewCompany(Company company) {
