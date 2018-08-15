@@ -7,6 +7,7 @@ import com.cs.trader.domain.Trader;
 import com.cs.trader.exceptions.CompanyNotFoundException;
 import com.cs.trader.exceptions.InvalidFieldException;
 import com.cs.trader.exceptions.TraderNotFoundException;
+import com.cs.trader.exceptions.UnauthorizedOperationsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +19,7 @@ import java.util.List;
 public class OrderService {
 	final HashSet<String> instructionsSet = new HashSet<>(Arrays.asList("BUY", "SELL"));
 	final HashSet<String> orderTypesSet = new HashSet<>(Arrays.asList("LIMIT", "MARKET"));
+	public enum orderStatus {OPEN, CANCELLED, FULFILLED};
 
 	@Autowired
 	OrderDao orderDao;
@@ -60,6 +62,10 @@ public class OrderService {
 		return orderDao.addOrder(order);
 	}
 
+	public Order retrieveOrderByOrderId(long orderId) {
+		return orderDao.findOrderByOrderId(orderId);
+	}
+
 	public List<Order> retrieveOrdersByTrader(long traderId) {
 		return orderDao.findOrderByTraderId(traderId);
 	}
@@ -67,6 +73,20 @@ public class OrderService {
 	public List<Order> retrieveOrdersByCompany(Company company) {
 		String tickerSymbol = company.getTicker();
 		return orderDao.findOrdersBySymbol(tickerSymbol);
+	}
+
+//	private String
+
+	public int cancelOrder(long orderId, long traderId) {
+		Order order = orderDao.findOrderByOrderId(orderId);
+
+		if(order.getTraderId() != traderId) {
+			throw new UnauthorizedOperationsException("Trader does not have write access on the requested order");
+		}
+
+//		if(!order.getStatus().equals(orderStatus.OPEN.toString()))
+
+		return orderDao.setOrderStatus(orderId, orderStatus.CANCELLED.toString());
 	}
 	
 }
