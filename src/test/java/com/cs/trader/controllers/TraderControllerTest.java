@@ -23,9 +23,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.cs.trader.domain.ActivitySummary;
+import com.cs.trader.domain.Order;
 import com.cs.trader.domain.Trader;
-import com.cs.trader.exceptions.TraderNotFoundException;
-import com.cs.trader.exceptions.TraderStillWorkingException;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
@@ -72,10 +72,10 @@ public class TraderControllerTest {
 			.auth().basic("john", "smith")
 			.accept(MediaType.APPLICATION_JSON_VALUE).
 		when()
-			.get("/traders/2").
+			.get("/traders/1").
 		then()
 			.statusCode(HttpStatus.SC_OK)
-			.body("firstName", equalTo("Kevin"));
+			.body("firstName", equalTo("Ernest"));
 		
 		/*ResponseBody body = 
 			given()
@@ -109,7 +109,7 @@ public class TraderControllerTest {
 					.auth().basic("john", "smith")
 					.accept(MediaType.APPLICATION_JSON_VALUE).
 				when()
-					.delete("/traders/1").
+					.delete("/traders/2").
 				then()
 					.statusCode(HttpStatus.SC_OK)
 					.extract().response().body();
@@ -169,6 +169,61 @@ public class TraderControllerTest {
 			.accept(MediaType.APPLICATION_JSON_VALUE).
 		when()
 			.post("/traders").
+		then()
+			.statusCode(HttpStatus.SC_BAD_REQUEST);
+	}
+	
+	@Test
+	public void findOrdersByTraderIdRequest() {
+		Response response = 
+			given()
+				.auth().basic("john", "smith")
+				.accept(MediaType.APPLICATION_JSON_VALUE).
+			when()
+				.get("/traders/1/orders").
+			then()
+				.statusCode(HttpStatus.SC_OK).
+			and()
+				.extract().response();
+		Order[] orders = response.as(Order[].class);
+		assertTrue("Number of orders retrieved is incorrect.",orders.length == 8);
+	}
+	
+	@Test
+	public void findOrdersByInvalidTraderIdRequest() {
+		given()
+			.auth().basic("john", "smith")
+			.accept(MediaType.APPLICATION_JSON_VALUE).
+		when()
+			.get("/traders/999/orders").
+		then()
+		.statusCode(HttpStatus.SC_BAD_REQUEST);
+	}
+	
+	@Test
+	public void findActivitySummaryByTraderIdRequest() {
+		Response response = 
+				given()
+					.auth().basic("john", "smith")
+					.accept(MediaType.APPLICATION_JSON_VALUE).
+				when()
+					.get("/traders/1/activitysummary").
+				then()
+					.statusCode(HttpStatus.SC_OK).
+				and()
+					.extract().response();
+		ActivitySummary summary = response.as(ActivitySummary.class);
+		Map<String, Long> orders = summary.getOrders();
+		assertTrue("Data in activity summary is incorrect.",orders.get("OPEN") == 6);
+	}
+	
+	@Test
+	public void findActivitySummaryByInvalidTraderIdRequest() {
+		given()
+			.auth().basic("john", "smith")
+			.accept(MediaType.APPLICATION_JSON_VALUE).
+		when()
+			.get("/traders/999/activitysummary").
 		then()
 			.statusCode(HttpStatus.SC_BAD_REQUEST);
 	}

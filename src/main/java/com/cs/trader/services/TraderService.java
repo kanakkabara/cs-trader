@@ -2,14 +2,15 @@ package com.cs.trader.services;
 
 import java.util.List;
 
-import org.glassfish.jersey.model.internal.RankedComparator.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cs.trader.dao.OrderDao;
 import com.cs.trader.dao.TraderDao;
 import com.cs.trader.domain.ActivitySummary;
+import com.cs.trader.domain.Order;
 import com.cs.trader.domain.Trader;
+import com.cs.trader.exceptions.TraderStillWorkingException;
 
 @Service
 public class TraderService {
@@ -29,11 +30,11 @@ public class TraderService {
 	public int deleteTrader(long id) {
 		//validate if trader has existing orders
 		int status = -1;
-		//if(!hasExistingOrders){
-			status = traderDao.deleteTrader(id);
-		//}else{
-			//throw new TraderStillWorkingException("Trader has existing orders.");
-		//}
+		List<Order> orders = orderDao.findOrderByTraderId(id);
+		if(orders.size() > 0) {
+			throw new TraderStillWorkingException("Trader has existing orders.");
+		}
+		status = traderDao.deleteTrader(id);
 		return status;
 	}
 	
@@ -50,8 +51,8 @@ public class TraderService {
 	}
 
 	public List<Order> findOrdersByTraderId(long id) {
-		
-		return null;
+		List<Order> orders = orderDao.findOrderByTraderId(id);
+		return orders;
 	}
 	
 }

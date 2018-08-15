@@ -1,11 +1,9 @@
 package com.cs.trader.services;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import org.glassfish.jersey.model.internal.RankedComparator.Order;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +13,7 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.cs.trader.domain.ActivitySummary;
+import com.cs.trader.domain.Order;
 import com.cs.trader.domain.Trader;
 import com.cs.trader.exceptions.InvalidFieldException;
 import com.cs.trader.exceptions.TraderNotFoundException;
@@ -36,8 +35,8 @@ public class TraderServiceTest {
 	
 	@Test
 	public void findTraderById() {
-		Trader trader = service.findTraderById(2);
-		assertTrue(trader.getFirstName(), "Kevin".equals(trader.getFirstName()));
+		Trader trader = service.findTraderById(1);
+		assertTrue(trader.getFirstName(), "Ernest".equals(trader.getFirstName()));
 	}
 	
 	@Test(expected = TraderNotFoundException.class)
@@ -61,13 +60,18 @@ public class TraderServiceTest {
 	
 	@Test
 	public void deleteTrader() {
-		int status = service.deleteTrader(1);
+		int status = service.deleteTrader(2);
 		assertTrue("Row not deleted successfully", status == 1);
 	}
 	
 	@Test(expected = TraderStillWorkingException.class)
 	public void deleteWorkingTrader() {
-		int status = service.deleteTrader(3);
+		int status = service.deleteTrader(1);
+	}
+	
+	@Test (expected = TraderNotFoundException.class)
+	public void deleteInvalidTrader() {
+		int status = service.deleteTrader(999);
 	}
 	
 	@Test
@@ -93,6 +97,7 @@ public class TraderServiceTest {
 	@Test(expected = TraderNotFoundException.class)
 	public void findOrdersByInvalidTraderId() {
 		List<Order> orders = service.findOrdersByTraderId(999);
+		System.out.println(orders);
 	}
 	
 }
