@@ -1,6 +1,5 @@
 package com.cs.trader.dao;
 
-<<<<<<< HEAD
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,9 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-=======
-import com.cs.trader.domain.Order;
->>>>>>> branch 'master' of https://github.com/kanakkabara/cs-trader.git
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -23,13 +19,8 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-<<<<<<< HEAD
 import com.cs.trader.domain.ActivitySummary;
 import com.cs.trader.domain.Order;
-=======
-import java.sql.*;
-import java.util.List;
->>>>>>> branch 'master' of https://github.com/kanakkabara/cs-trader.git
 
 @Repository
 public class OrderDao {

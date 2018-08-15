@@ -5,17 +5,22 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cs.trader.dao.OrderDao;
 import com.cs.trader.dao.TraderDao;
+import com.cs.trader.domain.ActivitySummary;
 import com.cs.trader.domain.Trader;
 
 @Service
 public class TraderService {
 	
 	@Autowired
-	TraderDao dao;
+	TraderDao traderDao;
+	
+	@Autowired
+	OrderDao orderDao;
 	
 	public int addTrader(Trader trader) {
-		int status = dao.addTrader(trader);
+		int status = traderDao.addTrader(trader);
 		return status;
 		
 	}
@@ -24,7 +29,7 @@ public class TraderService {
 		//validate if trader has existing orders
 		int status = -1;
 		//if(!hasExistingOrders){
-			status = dao.deleteTrader(id);
+			status = traderDao.deleteTrader(id);
 		//}else{
 			//throw new TraderStillWorkingException("Trader has existing orders.");
 		//}
@@ -32,11 +37,15 @@ public class TraderService {
 	}
 	
 	public List<Trader> findTraders(){
-		return dao.findTraders();
+		return traderDao.findTraders();
 	}
 	
 	public Trader findTraderById(long id) {
-		return dao.findTraderById(id);
+		return traderDao.findTraderById(id);
+	}
+	
+	public ActivitySummary findActivitySummaryByTraderId(long id) {
+		return orderDao.findActivitySummaryByTraderId(id);
 	}
 	
 }
