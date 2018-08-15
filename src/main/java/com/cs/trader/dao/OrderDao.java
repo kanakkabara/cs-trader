@@ -1,14 +1,6 @@
 package com.cs.trader.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
-import java.sql.Types;
-import java.util.List;
-
+import com.cs.trader.domain.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -17,7 +9,8 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import com.cs.trader.domain.Order;
+import java.sql.*;
+import java.util.List;
 
 @Repository
 public class OrderDao {
@@ -62,7 +55,12 @@ public class OrderDao {
 		return jdbcTemplate.query("SELECT * FROM ORDERS WHERE TRADER_ID=?", 
 				new OrderRowMapper(), traderId);
 	}
-	
+
+	public List<Order> findOrdersBySymbol(String tickerSymbol) {
+		return jdbcTemplate.query("SELECT * FROM ORDERS WHERE SYMBOL=?",
+				new OrderRowMapper(), tickerSymbol);
+	}
+
 	class OrderRowMapper implements RowMapper<Order>
 	{
 		@Override
