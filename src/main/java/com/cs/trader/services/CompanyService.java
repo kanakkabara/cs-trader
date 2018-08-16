@@ -4,6 +4,7 @@ import com.cs.trader.dao.CompanyDao;
 import com.cs.trader.domain.Company;
 import com.cs.trader.domain.Order;
 import com.cs.trader.exceptions.CompanyHasExistingOrdersException;
+import com.cs.trader.exceptions.DuplicateTickerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,7 +43,12 @@ public class CompanyService {
 
 	public int addNewCompany(Company company) {
 		sectorService.findSectorByID(company.getSectorID());
-		return companyDao.addNewCompany(company);
+		try {
+			validateCompanyByTicker(company.getTicker());
+		}catch(Exception e){
+			return companyDao.addNewCompany(company);
+		}
+		throw new DuplicateTickerException("Company with ticker = "+company.getTicker()+" already exists!");
 	}
 
 	public int deleteCompany(int companyID){
