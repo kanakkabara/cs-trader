@@ -1,5 +1,6 @@
 package com.cs.trader.controllers;
 
+import com.cs.trader.services.OrderService;
 import io.restassured.RestAssured;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
@@ -16,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasKey;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment= SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -27,7 +28,10 @@ public class OrderControllerTest {
     private int serverPort;
 
     @Autowired
-    TraderController controller;
+    OrderController controller;
+
+    @Autowired
+    OrderService orderService;
 
     @Before
     public void init() {
@@ -39,14 +43,14 @@ public class OrderControllerTest {
 
         Map<String, Object> orderRequest = new HashMap<>();
         orderRequest.put("symbol", "COMP2");
-        orderRequest.put("instruction", "BUY");
-        orderRequest.put("orderType", "LIMIT");
+        orderRequest.put("side", "BUY");
+        orderRequest.put("type", "LIMIT");
         orderRequest.put("price", 10.04);
         orderRequest.put("volume", 10);
         orderRequest.put("traderId", 1);
 
         given()
-            .auth().basic("john", "smith")
+            .auth().basic("ernest", "che")
             .contentType("application/json")
             .body(orderRequest)
             .accept(MediaType.APPLICATION_JSON_VALUE).
@@ -64,14 +68,13 @@ public class OrderControllerTest {
 
         Map<String, Object> orderRequest = new HashMap<>();
         orderRequest.put("symbol", "COMP2");
-        orderRequest.put("instruction", "SELL");
-        orderRequest.put("orderType", "MARKET");
+        orderRequest.put("side", "SELL");
+        orderRequest.put("type", "MARKET");
         orderRequest.put("price", null);
         orderRequest.put("volume", 10);
-        orderRequest.put("traderId", 1);
 
         given()
-            .auth().basic("john", "smith")
+            .auth().basic("ernest", "che")
             .contentType("application/json")
             .body(orderRequest)
             .accept(MediaType.APPLICATION_JSON_VALUE).
@@ -87,14 +90,13 @@ public class OrderControllerTest {
 
         Map<String, Object>  orderRequest = new HashMap<>();
         orderRequest.put("symbol", "COMP2");
-        orderRequest.put("instruction", "XXXX");
-        orderRequest.put("orderType", "LIMIT");
+        orderRequest.put("side", "XXXX");
+        orderRequest.put("type", "LIMIT");
         orderRequest.put("price", 10.04);
         orderRequest.put("volume", 10);
-        orderRequest.put("traderId", 1);
 
         given()
-            .auth().basic("john", "smith")
+            .auth().basic("ernest", "che")
             .contentType("application/json")
             .body(orderRequest)
             .accept(MediaType.APPLICATION_JSON_VALUE).
@@ -104,4 +106,49 @@ public class OrderControllerTest {
             .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
+    @Test
+    public void canCancelOrder() {
+        given()
+            .auth().basic("ernest", "che")
+            .contentType("application/json")
+            .accept(MediaType.APPLICATION_JSON_VALUE).
+        when()
+            .delete("/orders/9").
+        then()
+            .statusCode(HttpStatus.SC_OK);
+    }
+
+    @Test
+    public void returnBadRequestCodeOnInvalidCancelRequest() {
+        given()
+            .auth().basic("ernest", "che")
+            .contentType("application/json")
+            .accept(MediaType.APPLICATION_JSON_VALUE).
+        when()
+            .delete("/orders/6").
+        then()
+            .statusCode(HttpStatus.SC_BAD_REQUEST);
+    }
+
+    @Test
+    public void canUpdateExistingOrder() {
+        Map<String, Object> orderRequest = new HashMap<>();
+        orderRequest.put("symbol", "GOOGL");
+        orderRequest.put("side", "BUY");
+        orderRequest.put("type", "MARKET");
+        orderRequest.put("price", null);
+        orderRequest.put("volume", 10);
+
+        given()
+            .auth().basic("ernest", "che")
+            .contentType("application/json")
+            .body(orderRequest)
+            .accept(MediaType.APPLICATION_JSON_VALUE).
+        when()
+            .put("/orders/5").
+        then()
+            .statusCode(HttpStatus.SC_OK);
+    }
+
+    // TODO: *fel* unit test for checking username
 }
