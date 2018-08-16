@@ -30,12 +30,12 @@ public class OrderService {
 	TransactionService transactionService;
 
 	public long placeNewOrder(Order order, String username) {
-		if(!instructionsSet.contains(order.getSide())) {
-			throw new InvalidFieldException("Invalid value for 'instruction' field");
-		}
+//		if(!instructionsSet.contains(order.getSide())) {
+//			throw new InvalidFieldException("Invalid value for 'instruction' field");
+//		}
 
 //		validateOrderType(order.getType());
-//		validatePrice(order.getPrice(), order.getType());
+		validatePrice(order.getPrice(), order.getType());
 		validateVolume(order.getVolume());
 		validateSymbol(order.getSymbol());
 
@@ -82,7 +82,7 @@ public class OrderService {
 			throw new UnauthorizedOperationsException("Trader does not have write access on the requested order");
 		}
 
-		if(!order.getStatus().equals(OrderStatus.OPEN.toString())){
+		if(order.getStatus() != OrderStatus.OPEN){
 			throw new BadRequestException("Order is already fulfilled or cancelled");
 		}
 
@@ -140,7 +140,7 @@ public class OrderService {
 			throw new UnauthorizedOperationsException("Trader does not have write access on the requested order");
 		}
 
-		if(!existingOrder.getStatus().equals(OrderStatus.OPEN.toString())){
+		if(existingOrder.getStatus() != OrderStatus.OPEN){
 			throw new BadRequestException("Order is already fulfilled or cancelled");
 		}
 
@@ -148,7 +148,7 @@ public class OrderService {
 			throw new BadRequestException("Updating ticker symbol is not allowed");
 		}
 
-		if(!updatedOrder.getSide().equals(existingOrder.getSide())) {
+		if(updatedOrder.getSide() != existingOrder.getSide()) {
 			throw new BadRequestException("Updating side is not allowed");
 		}
 

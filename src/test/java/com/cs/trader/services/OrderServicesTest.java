@@ -3,6 +3,7 @@ package com.cs.trader.services;
 import com.cs.trader.CsTraderApplication;
 import com.cs.trader.domain.Order;
 import com.cs.trader.domain.OrderSide;
+import com.cs.trader.domain.OrderStatus;
 import com.cs.trader.domain.OrderType;
 import com.cs.trader.exceptions.InvalidFieldException;
 import com.cs.trader.exceptions.OrderNotFoundException;
@@ -202,9 +203,9 @@ public class OrderServicesTest {
 	public void canRetrieveOrdersGroupedByStatus() {
 		Map<Object, List<Order>> result = orderService.retrieveOrderByCustomConditions("status", null,
 				null, null, null, null, null);
-		assertTrue(result.containsKey("OPEN"));
-		assertTrue(result.containsKey("CANCELLED"));
-		assertTrue(result.containsKey("FULFILLED"));
+		assertTrue(result.containsKey(OrderStatus.OPEN));
+		assertTrue(result.containsKey(OrderStatus.CANCELLED));
+		assertTrue(result.containsKey(OrderStatus.FULFILLED));
 	}
 
 	@Test(expected = InvalidFieldException.class)
