@@ -6,6 +6,7 @@ import com.cs.trader.domain.ActivitySummary;
 import com.cs.trader.domain.Order;
 import com.cs.trader.domain.Trader;
 import com.cs.trader.domain.TraderRank;
+import com.cs.trader.exceptions.TraderNotFoundException;
 import com.cs.trader.exceptions.TraderStillWorkingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,9 +22,9 @@ public class TraderService {
 	@Autowired
 	OrderDao orderDao;
 	
-	public int addTrader(Trader trader) {
-		int status = traderDao.addTrader(trader);
-		return status;
+	public long addTrader(Trader trader) {
+		long traderID = traderDao.addTrader(trader);
+		return traderID;
 		
 	}
 	
@@ -51,11 +52,19 @@ public class TraderService {
 	}
 
 	public ActivitySummary findActivitySummaryByTraderId(long id) {
-		return orderDao.findActivitySummaryByTraderId(id);
+		ActivitySummary summary = orderDao.findActivitySummaryByTraderId(id);
+		if(summary.getLastOrderPlacement() == null) {
+			throw new TraderNotFoundException("Either trader ID is invalid, or trader has no activities");
+		}
+		return summary;
+
 	}
 
 	public List<Order> findOrdersByTraderId(long id) {
 		List<Order> orders = orderDao.findOrderByTraderId(id);
+		if(orders == null || orders.size() == 0) {
+			throw new TraderNotFoundException("Invalid trader ID");
+		}
 		return orders;
 	}
 	

@@ -139,19 +139,15 @@ public class TraderControllerTest {
 		jsonAsMap.put("username", "adam");
 		jsonAsMap.put("password", "appuru");
 		
-		ResponseBody body = 
-			given()
-				.auth().basic("john", "smith")
-				.contentType("application/json")
-				.body(jsonAsMap)
-				.accept(MediaType.APPLICATION_JSON_VALUE).
-			when()
-				.post("/traders").
-			then()
-				.statusCode(HttpStatus.SC_OK).
-			and()
-				.extract().response().body();
-		assertTrue("Expecting 1 row affected.", body.asString().equals("1"));
+		given()
+			.auth().basic("john", "smith")
+			.contentType("application/json")
+			.body(jsonAsMap)
+			.accept(MediaType.APPLICATION_JSON_VALUE).
+		when()
+			.post("/traders").
+		then()
+			.statusCode(HttpStatus.SC_OK);
 	}
 	
 	@Test
@@ -204,7 +200,7 @@ public class TraderControllerTest {
 		when()
 			.get("/traders/999/orders").
 		then()
-		.statusCode(HttpStatus.SC_BAD_REQUEST);
+		.statusCode(HttpStatus.SC_NOT_FOUND);
 	}
 	
 	@Test
@@ -234,7 +230,7 @@ public class TraderControllerTest {
 		when()
 			.get("/traders/999/activitysummary").
 		then()
-			.statusCode(HttpStatus.SC_BAD_REQUEST);
+			.statusCode(HttpStatus.SC_NOT_FOUND);
 	}
 	
 	@Test

@@ -34,7 +34,7 @@ public class TraderController {
 	}
 	
 	@PostMapping(value="/traders", produces= {MediaType.APPLICATION_JSON_VALUE})
-	public int addTrader(@RequestBody Trader trader) {
+	public long addTrader(@RequestBody Trader trader) {
 		return service.addTrader(trader);
 	}
 	

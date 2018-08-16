@@ -1,15 +1,24 @@
 package com.cs.trader.dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import com.cs.trader.domain.OrderStatus;
 import com.cs.trader.domain.Trader;
 import com.cs.trader.domain.TraderRank;
 import com.cs.trader.exceptions.InvalidFieldException;
@@ -21,16 +30,30 @@ public class TraderDao {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 	
-	public int addTrader(Trader trader) {
+	public long addTrader(Trader trader) {
 		String sql = "INSERT INTO TRADERS (FIRST_NAME, LAST_NAME, EMAIL, PHONE, ADDRESS, USERNAME) VALUES(?,?,?,?,?,?)";
+		
+		KeyHolder key = new GeneratedKeyHolder();
 		try {
-			int status = jdbcTemplate.update(sql,
-					new Object[] { trader.getFirstName(), trader.getLastName(), trader.getEmail(), 
-							trader.getPhone(), trader.getAddress(), trader.getUsername()});
-			return status;
+			jdbcTemplate.update(new PreparedStatementCreator() {
+			      @Override
+			      public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+			        final PreparedStatement ps = connection.prepareStatement(sql,
+			            Statement.RETURN_GENERATED_KEYS);
+			        ps.setString(1, trader.getFirstName());
+			        ps.setString(2, trader.getLastName());
+			        ps.setString(3, trader.getEmail());
+			        ps.setString(4, trader.getPhone());
+			        ps.setString(5, trader.getAddress());
+			        ps.setString(6, trader.getUsername());
+			        return ps;
+			      }
+			    }, key);
+			return key.getKey().longValue();
 		}catch(DataIntegrityViolationException ex) {
 			throw new InvalidFieldException("Invalid fields, please check again.");
 		}
+		    
 	}
 	
 	public int deleteTrader(long id) {

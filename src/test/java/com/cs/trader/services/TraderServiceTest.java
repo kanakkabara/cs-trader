@@ -48,14 +48,14 @@ public class TraderServiceTest {
 	@Test
 	public void addTrader() {
 		Trader trader = new Trader("John","Smith","johns@gmail.com","6590003213","Sentosa","johnny");
-		int status = service.addTrader(trader);
-		assertTrue("Row not inserted successfully",status == 1);
+		long traderId = service.addTrader(trader);
+		System.out.println(traderId);
 	}
 	
 	@Test(expected = InvalidFieldException.class)
 	public void addTraderWithInvalidFields() {
 		Trader trader = new Trader("John",null,"johns@gmail.com","6590003213","Sentosa","johnny");
-		int status = service.addTrader(trader);
+		long traderId = service.addTrader(trader);
 		
 	}
 	
@@ -78,14 +78,12 @@ public class TraderServiceTest {
 	@Test
 	public void findActivitySummaryByTraderId() {
 		ActivitySummary summary = service.findActivitySummaryByTraderId(1);
-		System.out.println(summary);
 		assertTrue("", summary.getOrders().get("OPEN") == 6);
 	}
 	
-	@Test
+	@Test(expected = TraderNotFoundException.class)
 	public void findActivitySummaryByInvalidTraderId() {
 		ActivitySummary summary = service.findActivitySummaryByTraderId(999);
-		System.out.println(summary);
 		assertTrue("", summary.getOrders().get("OPEN") == 6);
 	}
 	
