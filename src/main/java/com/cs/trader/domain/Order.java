@@ -5,22 +5,21 @@ import java.util.Date;
 public class Order {
 	private long orderId;
 	private String symbol;
-	private String instruction;
-	private String orderType;
+	private String side;
+	private String type;
 	private Double price;
 	private int volume;
 	private Date placementTimestamp;
 	private long traderId;
 	private String status;
 
-	public Order(String symbol, String instruction, String orderType, Double price, int volume, long traderId) {
+	public Order(String symbol, String side, String type, Double price, int volume) {
 		super();
 		this.symbol = symbol;
-		this.instruction = instruction;
-		this.orderType = orderType;
+		this.side = side;
+		this.type = type;
 		this.price = price;
 		this.volume = volume;
-		this.traderId = traderId;
 	}
 	
 	public Order() {}
@@ -37,17 +36,17 @@ public class Order {
 	public void setSymbol(String symbol) {
 		this.symbol = symbol;
 	}
-	public String getInstruction() {
-		return instruction;
+	public String getSide() {
+		return side;
 	}
-	public void setInstruction(String instruction) {
-		this.instruction = instruction;
+	public void setSide(String side) {
+		this.side = side;
 	}
-	public String getOrderType() {
-		return orderType;
+	public String getType() {
+		return type;
 	}
-	public void setOrderType(String orderType) {
-		this.orderType = orderType;
+	public void setType(String type) {
+		this.type = type;
 	}
 	public Double getPrice() {
 		return price;
