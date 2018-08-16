@@ -8,7 +8,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.*;
 
@@ -37,7 +36,7 @@ public class TransactionDao {
                 PreparedStatement statement = con.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);
                 statement.setInt(1, transaction.getOrderID());
                 statement.setInt(2, transaction.getTraderID());
-                statement.setString(3, transaction.getInstruction().toString());
+                statement.setString(3, transaction.getSide().toString());
                 statement.setString(4, transaction.getOrderType().toString());
                 statement.setDouble(5, transaction.getPrice());
                 statement.setInt(6, transaction.getVolume());

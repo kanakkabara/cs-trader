@@ -1,5 +1,5 @@
 package com.cs.trader.domain;
 
-public enum OrderInstruction {
+public enum OrderSide {
     BUY, SELL
 }

@@ -3,22 +3,22 @@ package com.cs.trader.domain;
 import java.sql.Timestamp;
 
 public class Transaction {
-    private int transactionID;
-    private int orderID;
-    private int traderID;
+    private long transactionID;
+    private long orderID;
+    private long traderID;
 
-    private OrderInstruction instruction;
+    private OrderSide side;
     private OrderType orderType;
     private Double price;
     private int volume;
     private Timestamp transactionTimestamp;
     private OrderStatus status;
 
-    public Transaction(int transactionID, int orderID, int traderID, OrderInstruction instruction, OrderType orderType, Double price, int volume, Timestamp transactionTimestamp, OrderStatus status) {
+    public Transaction(int transactionID, int orderID, int traderID, OrderSide instruction, OrderType orderType, Double price, int volume, Timestamp transactionTimestamp, OrderStatus status) {
         this.transactionID = transactionID;
         this.orderID = orderID;
         this.traderID = traderID;
-        this.instruction = instruction;
+        this.side = instruction;
         this.orderType = orderType;
         this.price = price;
         this.volume = volume;
@@ -26,39 +26,47 @@ public class Transaction {
         this.status = status;
     }
 
-    public Transaction() {
-    }
+//    public Transaction(Order order, TransactionType type) {
+//        this.orderID = order.getOrderId();
+//        this.traderID = order.getTraderId();
+//        this.side = order.getSide();
+//        this.orderType = orderType;
+//        this.price = price;
+//        this.volume = volume;
+//        this.transactionTimestamp = transactionTimestamp;
+//        this.status = status;
+//    }
 
-    public int getTransactionID() {
+    public long getTransactionID() {
         return transactionID;
     }
 
-    public void setTransactionID(int transactionID) {
+    public void setTransactionID(long transactionID) {
         this.transactionID = transactionID;
     }
 
-    public int getOrderID() {
+    public long getOrderID() {
         return orderID;
     }
 
-    public void setOrderID(int orderID) {
+    public void setOrderID(long orderID) {
         this.orderID = orderID;
     }
 
-    public int getTraderID() {
+    public long getTraderID() {
         return traderID;
     }
 
-    public void setTraderID(int traderID) {
+    public void setTraderID(long traderID) {
         this.traderID = traderID;
     }
 
-    public OrderInstruction getInstruction() {
-        return instruction;
+    public OrderSide getSide() {
+        return side;
     }
 
-    public void setInstruction(OrderInstruction instruction) {
-        this.instruction = instruction;
+    public void setSide(OrderSide side) {
+        this.side = side;
     }
 
     public OrderType getOrderType() {
