@@ -30,11 +30,6 @@ public class OrderService {
 	TransactionService transactionService;
 
 	public long placeNewOrder(Order order, String username) {
-//		if(!instructionsSet.contains(order.getSide())) {
-//			throw new InvalidFieldException("Invalid value for 'instruction' field");
-//		}
-
-//		validateOrderType(order.getType());
 		validatePrice(order.getPrice(), order.getType());
 		validateVolume(order.getVolume());
 		validateSymbol(order.getSymbol());
@@ -42,17 +37,11 @@ public class OrderService {
 		long traderId = traderService.findTraderIdByUsername(username).getTraderId();
 		order.setTraderId(traderId);
 
-		// TODO: *fel* update transaction log
-//		transactionService.addNewTransaction(order, )
-		return orderDao.addOrder(order);
-	}
+		long orderId = orderDao.addOrder(order);
+		order.setOrderId(orderId);
 
-	private void validateSymbol(String symbol) {
-		try {
-			Company company = companyService.validateCompanyByTicker(symbol);
-		} catch (CompanyNotFoundException ex) {
-			throw new InvalidFieldException("Symbol does not exist");
-		}
+		transactionService.addNewTransaction(new Transaction(order, TransactionType.CREATED));
+		return orderId;
 	}
 
 	public Order retrieveOrderByOrderId(long orderId) {
@@ -60,7 +49,6 @@ public class OrderService {
 	}
 
 	public List<Order> retrieveAllOrders() {
-		// TODO: test
 		return orderDao.findAllOrders();
 	}
 
@@ -72,7 +60,6 @@ public class OrderService {
 		String tickerSymbol = company.getTicker();
 		return orderDao.findOrdersBySymbol(tickerSymbol);
 	}
-
 
 	public void cancelOrder(long orderId, String username) {
 		Order order = orderDao.findOrderByOrderId(orderId);
@@ -86,8 +73,8 @@ public class OrderService {
 			throw new BadRequestException("Order is already fulfilled or cancelled");
 		}
 
-		// TODO: *fel* update transaction log
 		orderDao.updateOrderStatus(orderId, OrderStatus.CANCELLED);
+		transactionService.addNewTransaction(new Transaction(order, TransactionType.CANCELLED));
 
 		return;
 	}
@@ -152,15 +139,15 @@ public class OrderService {
 			throw new BadRequestException("Updating side is not allowed");
 		}
 
-//		validateOrderType(updatedOrder.getType());
 		validatePrice(updatedOrder.getPrice(), updatedOrder.getType());
 		validateVolume(updatedOrder.getVolume());
 
 		orderDao.updateVolumePriceAndType(orderId, updatedOrder.getVolume(), updatedOrder.getPrice(),
 				updatedOrder.getType());
+
+		updatedOrder.setOrderId(orderId);
+		transactionService.addNewTransaction(new Transaction(updatedOrder, TransactionType.UPDATED));
 	}
-
-
 
 	private void validateVolume(int volume) {
 		if(volume <= 0) {
@@ -174,9 +161,11 @@ public class OrderService {
 		}
 	}
 
-	private void validateOrderType(String type) {
-		if(!orderTypesSet.contains(type)) {
-			throw new InvalidFieldException("Invalid value for 'type' field");
+	private void validateSymbol(String symbol) {
+		try {
+			Company company = companyService.validateCompanyByTicker(symbol);
+		} catch (CompanyNotFoundException ex) {
+			throw new InvalidFieldException("Symbol does not exist");
 		}
 	}
 
