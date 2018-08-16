@@ -65,9 +65,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers(HttpMethod.PUT, "/companies/*").hasAuthority(User.Authority.ADMIN.toString())
 			.antMatchers(HttpMethod.DELETE, "/companies/*").hasAuthority(User.Authority.ADMIN.toString())
 
-//			.antMatchers("/traders").hasAuthority(User.Authority.ADMIN.toString())
-//			.antMatchers("/traders/{\\d+}/activitysummary").hasAnyAuthority(User.Authority.ADMIN.toString(), User.Authority.COMPLIANCE_OFFICER.toString())
-//			.antMatchers("/traders/top*").hasAnyAuthority(User.Authority.ADMIN.toString(), User.Authority.COMPLIANCE_OFFICER.toString())
+			.antMatchers("/traders").hasAuthority(User.Authority.ADMIN.toString())
+			.antMatchers("/traders/{\\d+}/activitysummary").hasAnyAuthority(User.Authority.ADMIN.toString(), User.Authority.COMPLIANCE_OFFICER.toString())
+			.antMatchers("/traders/top*").hasAnyAuthority(User.Authority.ADMIN.toString(), User.Authority.COMPLIANCE_OFFICER.toString())
+			
+			.antMatchers("/quotes").authenticated()
+			.antMatchers("/quotes/{\\\\d+}").authenticated()
+			
 //
 			.antMatchers("/orders").hasAuthority(User.Authority.TRADER.toString())
 

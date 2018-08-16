@@ -15,7 +15,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.cs.trader.domain.Quote;
-import com.cs.trader.domain.Trader;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
