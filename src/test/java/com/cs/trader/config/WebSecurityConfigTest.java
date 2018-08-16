@@ -1,6 +1,9 @@
 package com.cs.trader.config;
 
 import io.restassured.RestAssured;
+import io.restassured.response.Response;
+import io.restassured.response.ResponseBody;
+
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,10 +13,18 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.cs.trader.domain.ActivitySummary;
+import com.cs.trader.domain.Order;
+import com.cs.trader.domain.Trader;
+import com.cs.trader.domain.TraderRank;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment= SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -201,4 +212,167 @@ public class WebSecurityConfigTest {
         then()
             .statusCode(HttpStatus.SC_FORBIDDEN);
     }
+    
+    @Test	
+	public void adminFindTraders() {
+			given()
+				.auth().basic("john", "smith")
+				.accept(MediaType.APPLICATION_JSON_VALUE).
+			when()
+				.get("/traders").
+			then()
+				.statusCode(HttpStatus.SC_OK);
+	}
+    
+    @Test	
+	public void nonAdminCannotFindTraders() {
+			given()
+				.auth().basic("kanak", "kanak")
+				.accept(MediaType.APPLICATION_JSON_VALUE).
+			when()
+				.get("/traders").
+			then()
+				.statusCode(HttpStatus.SC_FORBIDDEN);
+	}
+	
+	@Test
+	public void adminDeleteTrader() {
+		given()
+			.auth().basic("john", "smith")
+			.accept(MediaType.APPLICATION_JSON_VALUE).
+		when()
+			.delete("/traders/2").
+		then()
+			.statusCode(HttpStatus.SC_OK);
+	}
+	
+	@Test
+	public void nonAdminCannotDeleteTrader() {
+		given()
+			.auth().basic("kanak", "kanak")
+			.accept(MediaType.APPLICATION_JSON_VALUE).
+		when()
+			.delete("/traders/2").
+		then()
+			.statusCode(HttpStatus.SC_FORBIDDEN);
+	}
+	
+	@Test
+	public void adminAddTrader() {
+		
+		Map<String, Object>  jsonAsMap = new HashMap<>();
+		jsonAsMap.put("firstName", "Adam");
+		jsonAsMap.put("lastName", "Apple");
+		jsonAsMap.put("email", "adam@gmail.com");
+		jsonAsMap.put("phone", "6592345678");
+		jsonAsMap.put("address", "Mayhem");
+		jsonAsMap.put("username", "adam");
+		jsonAsMap.put("password", "appuru");
+		
+		given()
+			.auth().basic("john", "smith")
+			.contentType("application/json")
+			.body(jsonAsMap)
+			.accept(MediaType.APPLICATION_JSON_VALUE).
+		when()
+			.post("/traders").
+		then()
+			.statusCode(HttpStatus.SC_OK);
+	}
+	
+	@Test
+	public void nonAdminCannotAddTrader() {
+		
+		Map<String, Object>  jsonAsMap = new HashMap<>();
+		jsonAsMap.put("firstName", "Adam");
+		jsonAsMap.put("lastName", "Apple");
+		jsonAsMap.put("email", "adam@gmail.com");
+		jsonAsMap.put("phone", "6592345678");
+		jsonAsMap.put("address", "Mayhem");
+		jsonAsMap.put("username", "adam");
+		jsonAsMap.put("password", "appuru");
+		
+		given()
+			.auth().basic("john", "smith")
+			.contentType("application/json")
+			.body(jsonAsMap)
+			.accept(MediaType.APPLICATION_JSON_VALUE).
+		when()
+			.post("/traders").
+		then()
+			.statusCode(HttpStatus.SC_FORBIDDEN);
+	}
+	
+	@Test
+	public void adminFindActivitySummaryByTraderId() {
+			given()
+				.auth().basic("john", "smith")
+				.contentType("application/json")
+				.accept(MediaType.APPLICATION_JSON_VALUE).
+			when()
+				.get("/traders/1/activitysummary").
+			then()
+				.statusCode(HttpStatus.SC_OK);
+	}
+	
+	@Test
+	public void nonAdminFindActivitySummaryByTraderId() {
+		given()
+			.auth().basic("john", "smith")
+			.contentType("application/json")
+			.accept(MediaType.APPLICATION_JSON_VALUE).
+		when()
+			.get("/traders/1/activitysummary").
+		then()
+			.statusCode(HttpStatus.SC_FORBIDDEN);
+	}
+	
+	@Test
+	public void findActivitySummaryByInvalidTraderIdRequest() {
+		given()
+			.auth().basic("john", "smith")
+			.contentType("application/json")
+			.accept(MediaType.APPLICATION_JSON_VALUE).
+		when()
+			.get("/traders/999/activitysummary").
+		then()
+			.statusCode(HttpStatus.SC_BAD_REQUEST);
+	}
+	
+	@Test
+	public void findTopFiveTradersByNumTrades() {
+		Response response = 
+				given()
+					.auth().basic("john", "smith")
+					.contentType("application/json")
+					.accept(MediaType.APPLICATION_JSON_VALUE).
+				when()
+					.get("/traders/topbynumtrades").
+				then()
+					.statusCode(HttpStatus.SC_OK).
+				and()
+					.extract().response();
+		TraderRank[] traders = response.as(TraderRank[].class);
+		Trader trader = traders[0].getTrader();
+		assertTrue("Top 5 traders by number of trades is incorrect.",trader.getFirstName().equals("Ernest"));
+	}
+	
+	@Test
+	public void findTopFiveTradersByVolume() {
+		Response response = 
+				given()
+					.auth().basic("john", "smith")
+					.contentType("application/json")
+					.accept(MediaType.APPLICATION_JSON_VALUE).
+				when()
+					.get("/traders/topbyvolume").
+				then()
+					.statusCode(HttpStatus.SC_OK).
+				and()
+					.extract().response();
+		TraderRank[] traders = response.as(TraderRank[].class);
+		Trader trader = traders[0].getTrader();
+		assertTrue("Top 5 traders by volume is incorrect.",trader.getFirstName().equals("Ernest"));
+	}
+    
 }

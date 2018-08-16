@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import com.cs.trader.dao.QuoteDao;
 import com.cs.trader.domain.Quote;
 import com.cs.trader.exceptions.InvalidFieldException;
-import com.cs.trader.exceptions.TraderNotFoundException;
 
 @Service
 public class QuoteService {
