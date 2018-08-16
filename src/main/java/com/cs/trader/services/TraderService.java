@@ -1,10 +1,5 @@
 package com.cs.trader.services;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.cs.trader.dao.OrderDao;
 import com.cs.trader.dao.TraderDao;
 import com.cs.trader.domain.ActivitySummary;
@@ -12,6 +7,10 @@ import com.cs.trader.domain.Order;
 import com.cs.trader.domain.Trader;
 import com.cs.trader.domain.TraderRank;
 import com.cs.trader.exceptions.TraderStillWorkingException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class TraderService {
@@ -46,7 +45,11 @@ public class TraderService {
 	public Trader findTraderById(long id) {
 		return traderDao.findTraderById(id);
 	}
-	
+
+	public Trader findTraderIdByUsername(String username) {
+		return traderDao.findTraderByUsername(username);
+	}
+
 	public ActivitySummary findActivitySummaryByTraderId(long id) {
 		return orderDao.findActivitySummaryByTraderId(id);
 	}
