@@ -61,7 +61,6 @@ public class TraderControllerTest {
 					.statusCode(HttpStatus.SC_OK).
 				and()
 					.extract().response();
-		List<Trader> users = new ArrayList<Trader>();
 
 		Trader[] usersResponse = response.as(Trader[].class);
 		assertEquals("First name of first row retrieved should be Ernest",usersResponse[0].getFirstName(), "Ernest");

@@ -2,6 +2,8 @@ package com.cs.trader.dao;
 
 import static org.junit.Assert.assertTrue;
 
+import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -37,17 +39,26 @@ public class QuotesDaoTest {
 	
 	@Test
 	public void findQuotesByTickerAndTimestamp() {
-		Date timestampFrom = new Date();
-		Date timestampAfter = new Date();
+		Calendar cal = Calendar.getInstance();	
+		cal.set(116 + 1900, 9, 11, 1, 0, 0);
+		Date timestampFrom = cal.getTime();
+		cal.set(116 + 1900, 9, 11, 8, 0, 0);
+		System.out.println(new Timestamp(timestampFrom.getTime()));
+		Date timestampAfter = cal.getTime();
 		List<Quote> quotes = dao.findQuotesByTickerAndTimestamp("GOOGL", timestampFrom, timestampAfter);
+		System.out.println(quotes);
 		assertTrue("",quotes.size() == 4);
 	}
 	
 	@Test
 	public void findQuotesByTimestamp() {
-		Date timestampFrom = new Date();
-		Date timestampAfter = new Date();
+		Calendar cal = Calendar.getInstance();	
+		cal.set(116 + 1900, 9, 11, 1, 0, 0);
+		Date timestampFrom = cal.getTime();
+		cal.set(116 + 1900, 9, 11, 8, 0, 0);
+		Date timestampAfter = cal.getTime();
 		List<Quote> quotes = dao.findQuotesByTimestamp(timestampFrom, timestampAfter);
+		System.out.println(quotes);
 		assertTrue("",quotes.size() == 4);
 	}
 	

@@ -2,6 +2,7 @@ package com.cs.trader.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -10,9 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import com.cs.trader.dao.TraderDao.TraderRowMapper;
 import com.cs.trader.domain.Quote;
-import com.cs.trader.domain.Trader;
 import com.cs.trader.exceptions.TraderNotFoundException;
 
 @Repository
@@ -23,12 +22,15 @@ public class QuoteDao {
 	
 	
 	public List<Quote> findQuotes() {
-		return jdbcTemplate.query("SELECT * FROM QUOTES",
+		return jdbcTemplate.query("SELECT * FROM QUOTES ORDER BY FULFILLED_TIMESTAMP",
 				new QuoteRowMapper());
 	}
 	
 	public List<Quote> findQuotesByTicker(String ticker) {
-		String sql = "SELECT * FROM TRADERS WHERE TICKER = ?";
+		String sql = "SELECT QUOTES.*, ORDERS.SYMBOL FROM QUOTES, ORDERS, COMPANIES " + 
+				"WHERE QUOTES.BUY_ID = ORDERS.ORDER_ID AND ORDERS.SYMBOL = COMPANIES.TICKER_SYMBOL " +
+				"AND COMPANIES.TICKER_SYMBOL = ? " + 
+				"ORDER BY FULFILLED_TIMESTAMP";
 		try {
 			return jdbcTemplate.query(sql,
 				new QuoteRowMapper(), ticker);
@@ -40,21 +42,27 @@ public class QuoteDao {
 	
 	public List<Quote> findQuotesByTickerAndTimestamp(String ticker, Date timestampFrom,
 			Date timestampAfter) {
-		String sql = "SELECT * FROM TRADERS WHERE TICKER = ?";
+		String sql = "SELECT QUOTES.*, ORDERS.SYMBOL FROM QUOTES, ORDERS, COMPANIES " + 
+				"WHERE QUOTES.BUY_ID = ORDERS.ORDER_ID AND ORDERS.SYMBOL = COMPANIES.TICKER_SYMBOL " + 
+				"AND COMPANIES.TICKER_SYMBOL = ? AND FULFILLED_TIMESTAMP >= ? AND FULFILLED_TIMESTAMP <= ? " + 
+				"ORDER BY FULFILLED_TIMESTAMP;";
 		try {
 			return jdbcTemplate.query(sql,
-				new QuoteRowMapper(), ticker, timestampFrom, timestampAfter);
+				new QuoteRowMapper(), ticker, new Timestamp(timestampFrom.getTime()), new Timestamp(timestampAfter.getTime()));
 		}catch(Exception ex) {
 			throw new TraderNotFoundException("No quotes from ticker symbol " + ticker +
-					"can be found in period specified.");
+					"can be found in period " + timestampFrom + " to " + timestampAfter);
 		}
 	}
 	
 	public List<Quote> findQuotesByTimestamp(Date timestampFrom, Date timestampAfter) {
-		String sql = "SELECT * FROM TRADERS WHERE TICKER = ?";
+		String sql = "SELECT QUOTES.*, ORDERS.SYMBOL FROM QUOTES, ORDERS, COMPANIES " + 
+				"WHERE QUOTES.BUY_ID = ORDERS.ORDER_ID AND ORDERS.SYMBOL = COMPANIES.TICKER_SYMBOL " + 
+				"AND FULFILLED_TIMESTAMP >= ? AND FULFILLED_TIMESTAMP <= ? " + 
+				"ORDER BY FULFILLED_TIMESTAMP;";
 		try {
 			return jdbcTemplate.query(sql,
-				new QuoteRowMapper(), timestampFrom, timestampAfter);
+				new QuoteRowMapper(), new Timestamp(timestampFrom.getTime()), new Timestamp(timestampAfter.getTime()));
 		}catch(Exception ex) {
 			throw new TraderNotFoundException("No quotes from can be found in period specified.");
 		}
