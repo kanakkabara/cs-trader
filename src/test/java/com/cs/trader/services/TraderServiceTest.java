@@ -92,7 +92,7 @@ public class TraderServiceTest {
 	@Test
 	public void findOrdersByTraderId() {
 		List<Order> orders = service.findOrdersByTraderId(1);
-		assertTrue("", orders.size() == 8);
+		assertTrue("", orders.size() == 10);
 	}
 	
 	@Test(expected = TraderNotFoundException.class)

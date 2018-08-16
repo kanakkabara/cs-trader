@@ -193,7 +193,7 @@ public class TraderControllerTest {
 			and()
 				.extract().response();
 		Order[] orders = response.as(Order[].class);
-		assertTrue("Number of orders retrieved is incorrect.",orders.length == 8);
+		assertTrue("Number of orders retrieved is incorrect.",orders.length == 10);
 	}
 	
 	@Test
