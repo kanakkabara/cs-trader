@@ -8,8 +8,6 @@ public class Sector {
 	private int sectorID;
 	private String sectorName;
 	private String sectorDesc;
-
-	@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 	private int companyCount;
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
@@ -81,6 +79,7 @@ public class Sector {
 		this.sectorID = copy.sectorID;
 		this.sectorName = copy.sectorName;
 		this.sectorDesc = copy.sectorDesc;
+		this.companyCount = companies.size();
 		this.companies = companies;
 	}
 }
