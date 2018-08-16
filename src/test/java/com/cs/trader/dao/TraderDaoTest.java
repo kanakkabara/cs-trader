@@ -53,7 +53,7 @@ public class TraderDaoTest {
 	
 	@Test(expected = InvalidFieldException.class)
 	public void addTraderWithInvalidFields() {
-		Trader trader = new Trader("John","Smith","johns@gmail.com","6590003213","Sentosa","johnny");
+		Trader trader = new Trader("John","Smith",null,"6590003213","Sentosa","johnny");
 		int status = dao.addTrader(trader);
 	}
 	
