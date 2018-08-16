@@ -70,12 +70,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/traders/top*").hasAnyAuthority(User.Authority.ADMIN.toString(), User.Authority.COMPLIANCE_OFFICER.toString())
 			
 			.antMatchers("/quotes").authenticated()
-			.antMatchers("/quotes/{\\\\d+}").authenticated()
+			.antMatchers("/quotes/{\\d+}").authenticated()
 			
-//
 			.antMatchers("/orders").hasAuthority(User.Authority.TRADER.toString())
+			.antMatchers("/orders/*").hasAuthority(User.Authority.TRADER.toString())
 
 			.antMatchers("/log").hasAuthority(User.Authority.COMPLIANCE_OFFICER.toString())
+
 //			.antMatchers("/user").hasAuthority(User.Authority.ADMIN.toString())
 		.and()
 			.httpBasic()//.formLogin().usernameParameter("username").passwordParameter("password")
