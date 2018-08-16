@@ -150,6 +150,24 @@ public class CompanyControllerTest {
         jsonAsMap.put("sectorID", 5);
 
         given()
+                .auth().basic("john", "smith")
+                .contentType("application/json")
+                .body(jsonAsMap)
+                .accept(MediaType.APPLICATION_JSON_VALUE).
+                when()
+                .post("/companies").
+                then()
+                .statusCode(HttpStatus.SC_NOT_FOUND);
+    }
+
+    @Test
+    public void addCompanyFailsWithDuplicateTicker(){
+        Map<String, Object> jsonAsMap = new HashMap<>();
+        jsonAsMap.put("companyName", "Company 4");
+        jsonAsMap.put("ticker", "COMP1");
+        jsonAsMap.put("sectorID", 1);
+
+        given()
             .auth().basic("john", "smith")
             .contentType("application/json")
             .body(jsonAsMap)
@@ -157,7 +175,7 @@ public class CompanyControllerTest {
         when()
             .post("/companies").
         then()
-            .statusCode(HttpStatus.SC_NOT_FOUND);
+            .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
     @Test

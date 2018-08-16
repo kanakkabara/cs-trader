@@ -5,6 +5,7 @@ import com.cs.trader.dao.CompanyDao;
 import com.cs.trader.domain.Company;
 import com.cs.trader.exceptions.CompanyHasExistingOrdersException;
 import com.cs.trader.exceptions.CompanyNotFoundException;
+import com.cs.trader.exceptions.DuplicateTickerException;
 import com.cs.trader.exceptions.SectorNotFoundException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,6 +41,11 @@ public class CompanyServiceTest {
     @Test(expected = SectorNotFoundException.class)
     public void addCompanyFailsForInvalidSector(){
         companyService.addNewCompany(new Company(0, "CompName", "CompTicker", 4));
+    }
+
+    @Test(expected = DuplicateTickerException.class)
+    public void addCompanyFailsForDuplicateTicker(){
+        companyService.addNewCompany(new Company(0, "CompName", "COMP1", 2));
     }
 
     @Test

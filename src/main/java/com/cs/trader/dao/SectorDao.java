@@ -24,17 +24,13 @@ public class SectorDao {
 	@Autowired
 	private JdbcTemplate jdbc;
 	
-	@Autowired
-	private CompanyService companyService;
-	
 	public List<Sector> findAllSectors(){
-		return jdbc.query("SELECT s.SECTOR_ID, SECTOR_NAME, SECTOR_DESCRIPTION, COUNT(*) as COMPANY_COUNT FROM SECTORS s, COMPANIES c WHERE s.SECTOR_ID = c.SECTOR_ID GROUP BY s.SECTOR_ID", new SectorRowMapper());
+		return jdbc.query("SELECT s.SECTOR_ID, SECTOR_NAME, SECTOR_DESCRIPTION, COUNT(c.COMPANY_ID) as COMPANY_COUNT FROM SECTORS s LEFT JOIN COMPANIES c ON s.SECTOR_ID = c.SECTOR_ID GROUP BY s.SECTOR_ID", new SectorRowMapper());
 	}
 	
 	public Sector findSectorByID(int id){
 		try {
-			Sector s = jdbc.queryForObject("select * from sectors where SECTOR_ID = ?", new SectorRowMapper(), id);
-			return new Sector(s, companyService.findAllCompaniesBySectorID(id));
+			return jdbc.queryForObject("select * from sectors where SECTOR_ID = ?", new SectorRowMapper(), id);
 		}catch(Exception e) {
 			throw new SectorNotFoundException("Could not find a sector with Sector ID["+id+"]");
 		}
@@ -55,35 +51,25 @@ public class SectorDao {
 		return holder.getKey().intValue();
 	}
 	
-	public Sector updateSector(int sectorID, Sector sector){
-		try {
-			findSectorByID(sectorID);
-		}catch(Exception e) {
-			throw new SectorNotFoundException("Could not find a sector with Sector ID["+sectorID+"]");
-		}
-		
+	public Sector updateSector(Sector sector){
 		int rows = jdbc.update(new PreparedStatementCreator() {
 		    @Override
 		    public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-		        PreparedStatement statement = con.prepareStatement("UPDATE SECTORS SET SECTOR_DESCRIPTION=? WHERE SECTOR_ID=?", Statement.RETURN_GENERATED_KEYS);
+		        PreparedStatement statement = con.prepareStatement("UPDATE SECTORS SET SECTOR_DESCRIPTION=?, SECTOR_NAME=? WHERE SECTOR_ID=?", Statement.RETURN_GENERATED_KEYS);
 		        statement.setString(1, sector.getSectorDesc());
-		        statement.setInt(2, sectorID);
+				statement.setString(2, sector.getSectorName());
+		        statement.setInt(3, sector.getSectorID());
 		        return statement;
 		    }
 		});
 		
-		if(rows != 0) return findSectorByID(sectorID);
+		if(rows != 0) return findSectorByID(sector.getSectorID());
 		else throw new RuntimeException("Internal Server Error");
 
 	}
 	
 	public int deleteSector(int sectorID){
-		int numberOfCompanies = companyService.findAllCompaniesBySectorID(sectorID).size();
-		if(numberOfCompanies == 0) {
-			return jdbc.update("DELETE FROM SECTORS WHERE SECTOR_ID = ?", new Object[] {sectorID});
-		}else {
-			throw new SectorHasValidCompanies("Sector ID["+sectorID+"] has some valid companies, cannot perform delete operation!");
-		}
+		return jdbc.update("DELETE FROM SECTORS WHERE SECTOR_ID = ?", new Object[] {sectorID});
 	}
 	
 	class SectorRowMapper implements RowMapper<Sector> {
