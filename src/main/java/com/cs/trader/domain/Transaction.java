@@ -4,38 +4,45 @@ import java.sql.Timestamp;
 
 public class Transaction {
     private long transactionID;
+    private TransactionType transactionType;
+
     private long orderID;
     private long traderID;
-
-    private OrderSide side;
+    private OrderSide orderSide;
     private OrderType orderType;
     private Double price;
     private int volume;
     private Timestamp transactionTimestamp;
-    private OrderStatus status;
+    private OrderStatus orderStatus;
 
-    public Transaction(int transactionID, int orderID, int traderID, OrderSide instruction, OrderType orderType, Double price, int volume, Timestamp transactionTimestamp, OrderStatus status) {
+    public Transaction(){}
+
+    public Transaction(int transactionID, int orderID, int traderID, OrderSide orderSide, OrderType orderType, Double price, int volume, OrderStatus orderStatus) {
         this.transactionID = transactionID;
         this.orderID = orderID;
         this.traderID = traderID;
-        this.side = instruction;
+        this.orderSide = orderSide;
         this.orderType = orderType;
         this.price = price;
         this.volume = volume;
-        this.transactionTimestamp = transactionTimestamp;
-        this.status = status;
+        this.orderStatus = orderStatus;
+
+        this.transactionTimestamp = Timestamp.from(java.time.Instant.now());
+        this.transactionType = TransactionType.CREATED;
     }
 
-//    public Transaction(Order order, TransactionType type) {
-//        this.orderID = order.getOrderId();
-//        this.traderID = order.getTraderId();
-//        this.side = order.getSide();
-//        this.orderType = orderType;
-//        this.price = price;
-//        this.volume = volume;
-//        this.transactionTimestamp = transactionTimestamp;
-//        this.status = status;
-//    }
+    public Transaction(Order order, TransactionType type) {
+        this.orderID = order.getOrderId();
+        this.traderID = order.getTraderId();
+        this.orderSide = order.getSide();
+        this.orderType = order.getType();
+        this.price = order.getPrice();
+        this.volume = order.getVolume();
+        this.orderStatus = order.getStatus();
+
+        this.transactionTimestamp = Timestamp.from(java.time.Instant.now());
+        this.transactionType = type;
+    }
 
     public long getTransactionID() {
         return transactionID;
@@ -43,6 +50,14 @@ public class Transaction {
 
     public void setTransactionID(long transactionID) {
         this.transactionID = transactionID;
+    }
+
+    public TransactionType getTransactionType() {
+        return transactionType;
+    }
+
+    public void setTransactionType(TransactionType transactionType) {
+        this.transactionType = transactionType;
     }
 
     public long getOrderID() {
@@ -61,12 +76,12 @@ public class Transaction {
         this.traderID = traderID;
     }
 
-    public OrderSide getSide() {
-        return side;
+    public OrderSide getOrderSide() {
+        return orderSide;
     }
 
-    public void setSide(OrderSide side) {
-        this.side = side;
+    public void setOrderSide(OrderSide orderSide) {
+        this.orderSide = orderSide;
     }
 
     public OrderType getOrderType() {
@@ -101,11 +116,11 @@ public class Transaction {
         this.transactionTimestamp = transactionTimestamp;
     }
 
-    public OrderStatus getStatus() {
-        return status;
+    public OrderStatus getOrderStatus() {
+        return orderStatus;
     }
 
-    public void setStatus(OrderStatus status) {
-        this.status = status;
+    public void setOrderStatus(OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
     }
 }

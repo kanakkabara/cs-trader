@@ -48,7 +48,7 @@ public class CompanyControllerTest {
                 .extract().response();
 
         Company[] usersResponse = response.as(Company[].class);
-        assertEquals("Does not return all companies", 4, usersResponse.length);
+        assertEquals("Does not return all companies", 5, usersResponse.length);
     }
 
     @Test
@@ -139,7 +139,7 @@ public class CompanyControllerTest {
             and()
                 .extract().response().body();
 
-        assertTrue("Expecting ID of new entry.", body.asString().equals("4"));
+        assertTrue("Expecting ID of new entry.", body.asString().equals("5"));
     }
 
     @Test

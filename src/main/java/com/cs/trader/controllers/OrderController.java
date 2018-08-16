@@ -35,7 +35,7 @@ public class OrderController {
     }
 
     @DeleteMapping(value="/orders/{id}", produces= {MediaType.APPLICATION_JSON_VALUE})
-    public void deleteOrder(Principal principal, @PathVariable(value="id") long orderId) {
+    public void deleteOrder(@PathVariable(value="id") long orderId, Principal principal) {
         String username = principal.getName();
         orderService.cancelOrder(orderId, username);
         return;

@@ -27,13 +27,13 @@ public class CompanyDaoTest {
 
     @Test
     public void findAllCompaniesReturnsAllCompanies() {
-        assertTrue("Number of companies found is incorrect.", compDao.findAllCompanies().size() == 3);
+        assertTrue("Number of companies found is incorrect.", compDao.findAllCompanies().size() == 4);
     }
 
     @Test
     public void findAllCompaniesBySectorIDReturnsValidCompanies() {
         assertTrue("Number of companies found in Sector 1 is incorrect.", compDao.findAllCompaniesBySectorID(1).size() == 1);
-        assertTrue("Number of companies found in Sector 2 is incorrect.", compDao.findAllCompaniesBySectorID(2).size() == 2);
+        assertTrue("Number of companies found in Sector 2 is incorrect.", compDao.findAllCompaniesBySectorID(2).size() == 3);
     }
 
     @Test
@@ -108,7 +108,7 @@ public class CompanyDaoTest {
     public void addCompanyReturnsIdOfNewObject(){
         //TODO mock sector service
         int cID = compDao.addNewCompany(new Company(0, "CompName", "CompTicker", 2));
-        assertEquals("ID of new company is not returned", 5, cID);
+        assertEquals("ID of new company is not returned", 6, cID);
     }
 
     @Test

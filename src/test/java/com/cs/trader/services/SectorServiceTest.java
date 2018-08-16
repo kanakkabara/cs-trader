@@ -36,7 +36,7 @@ public class SectorServiceTest {
     @Test
     public void findSectorByIDPopulatesWithCorrectCompanies(){
         Sector s = sectorService.findSectorByID(2);
-        assertEquals(s.getCompanies().size(), 2);
+        assertEquals(s.getCompanies().size(), 3);
         for(Company c : s.getCompanies())
             assertEquals(c.getSectorID(), 2);
     }

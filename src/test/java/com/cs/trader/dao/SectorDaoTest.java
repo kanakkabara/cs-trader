@@ -31,7 +31,7 @@ public class SectorDaoTest {
     public void findAllSectorsReturnsCompanyCountForEachSector() {
         List<Sector> sectors = sectorDao.findAllSectors();
         assertEquals("Sector 1 has 1 company", 1, sectors.get(0).getCompanyCount());
-        assertEquals("Sector 2 has 2 companies", 2, sectors.get(1).getCompanyCount());
+        assertEquals("Sector 2 has 2 companies", 3, sectors.get(1).getCompanyCount());
         assertEquals("Sector 3 has 0 companies", 0, sectors.get(2).getCompanyCount());
     }
 

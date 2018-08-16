@@ -65,7 +65,7 @@ public class SectorControllerTest {
 
         Sector[] usersResponse = response.as(Sector[].class);
         assertEquals("Sector 1 has count 1", 1, usersResponse[0].getCompanyCount());
-        assertEquals("Sector 2 has count 2", 2, usersResponse[1].getCompanyCount());
+        assertEquals("Sector 2 has count 2", 3, usersResponse[1].getCompanyCount());
         assertEquals("Sector 3 has count 0", 0, usersResponse[2].getCompanyCount());
     }
 
@@ -95,9 +95,10 @@ public class SectorControllerTest {
                 .extract().response();
 
         Sector usersResponse = response.as(Sector.class);
-        assertEquals(usersResponse.getCompanies().size(), 2);
+        assertEquals(usersResponse.getCompanies().size(), 3);
         assertEquals(usersResponse.getCompanies().get(0).getSectorID(), 2);
         assertEquals(usersResponse.getCompanies().get(1).getSectorID(), 2);
+        assertEquals(usersResponse.getCompanies().get(2).getSectorID(), 2);
     }
 
     @Test
