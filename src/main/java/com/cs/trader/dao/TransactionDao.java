@@ -34,8 +34,8 @@ public class TransactionDao {
             @Override
             public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
                 PreparedStatement statement = con.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);
-                statement.setInt(1, transaction.getOrderID());
-                statement.setInt(2, transaction.getTraderID());
+                statement.setLong(1, transaction.getOrderID());
+                statement.setLong(2, transaction.getTraderID());
                 statement.setString(3, transaction.getSide().toString());
                 statement.setString(4, transaction.getOrderType().toString());
                 statement.setDouble(5, transaction.getPrice());
