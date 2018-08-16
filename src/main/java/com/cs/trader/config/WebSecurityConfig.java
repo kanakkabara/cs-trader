@@ -69,7 +69,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //			.antMatchers("/traders/{\\d+}/activitysummary").hasAnyAuthority(User.Authority.ADMIN.toString(), User.Authority.COMPLIANCE_OFFICER.toString())
 //			.antMatchers("/traders/top*").hasAnyAuthority(User.Authority.ADMIN.toString(), User.Authority.COMPLIANCE_OFFICER.toString())
 //
-//			.antMatchers(HttpMethod.GET, "/orders*").hasAnyAuthority(User.Authority.TRADER.toString(), User.Authority.ADMIN.toString())
+			.antMatchers("/orders").hasAuthority(User.Authority.TRADER.toString())
 
 			.antMatchers("/log").hasAuthority(User.Authority.COMPLIANCE_OFFICER.toString())
 //			.antMatchers("/user").hasAuthority(User.Authority.ADMIN.toString())

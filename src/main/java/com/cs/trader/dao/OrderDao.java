@@ -1,7 +1,6 @@
 package com.cs.trader.dao;
 
-import com.cs.trader.domain.ActivitySummary;
-import com.cs.trader.domain.Order;
+import com.cs.trader.domain.*;
 import com.cs.trader.exceptions.OrderNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -12,6 +11,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,17 +22,17 @@ public class OrderDao {
 	private JdbcTemplate jdbcTemplate;
 	
 	public long addOrder(Order order) {
-		String insertSql = "INSERT INTO ORDERS(SYMBOL, INSTRUCTION, ORDER_TYPE, PRICE, VOLUME, "
+		String insertSql = "INSERT INTO ORDERS(SYMBOL, SIDE, TYPE, PRICE, VOLUME, "
 				+ "PLACEMENT_TIMESTAMP, TRADER_ID, STATUS) VALUES(?, ?, ?, ?, ?, ?, ?, ?);";
 		KeyHolder key = new GeneratedKeyHolder();
 		jdbcTemplate.update(new PreparedStatementCreator() {
 		      @Override
 		      public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-		        final PreparedStatement ps = connection.prepareStatement(insertSql, 
+		        final PreparedStatement ps = connection.prepareStatement(insertSql,
 		            Statement.RETURN_GENERATED_KEYS);
 		        ps.setString(1, order.getSymbol());
-		        ps.setString(2, order.getInstruction());
-		        ps.setString(3, order.getOrderType());
+		        ps.setString(2, order.getSide().toString());
+		        ps.setString(3, order.getType().toString());
 		        if(order.getPrice() == null) {
 		        	ps.setNull(4, Types.DOUBLE);
 		        } else {
@@ -41,14 +41,14 @@ public class OrderDao {
 		        ps.setInt(5, order.getVolume());
 		        ps.setTimestamp(6, Timestamp.from(java.time.Instant.now()));
 		        ps.setLong(7, order.getTraderId());
-		        ps.setString(8, "OPEN");
+		        ps.setString(8, OrderStatus.OPEN.toString());
 		        return ps;
 		      }
 		    }, key);
 
 		    return key.getKey().longValue();
 	}
-	
+
 	public Order findOrderByOrderId(long orderId) {
 		try{
 			return jdbcTemplate.queryForObject("SELECT * FROM ORDERS WHERE ORDER_ID=?",
@@ -57,9 +57,13 @@ public class OrderDao {
 			throw new OrderNotFoundException("Order with id " + orderId + " cannot be found.");
 		}
 	}
-	
+
+	public List<Order> findAllOrders() {
+		return jdbcTemplate.query("SELECT * FROM ORDERS", new OrderRowMapper());
+	}
+
 	public List<Order> findOrderByTraderId(long traderId) {
-		return jdbcTemplate.query("SELECT * FROM ORDERS WHERE TRADER_ID=?", 
+		return jdbcTemplate.query("SELECT * FROM ORDERS WHERE TRADER_ID=?",
 				new OrderRowMapper(), traderId);
 	}
 
@@ -68,11 +72,56 @@ public class OrderDao {
 				new OrderRowMapper(), tickerSymbol);
 	}
 
-	public int setOrderStatus(long orderId, String newStatus) {
-
+	public int updateOrderStatus(long orderId, OrderStatus newStatus) {
 		int numOfRowAffected = jdbcTemplate.update("UPDATE ORDERS SET STATUS=? WHERE ORDER_ID=?",
-				new Object[] {newStatus, orderId});
+				new Object[] {newStatus.toString(), orderId});
 		return numOfRowAffected;
+	}
+
+	public int updateVolumePriceAndType(long orderId, int volume, Double price, OrderType type) {
+		int numOfRowAffected = jdbcTemplate.update("UPDATE ORDERS SET VOLUME=?, PRICE=?, TYPE=?  " +
+						"WHERE ORDER_ID=?", new Object[] {volume, price, type.toString(), orderId});
+		return numOfRowAffected;
+	}
+
+	public List<Order> findOrdersByCustomQuery(String sortingField, String order, String symbolFilter,
+											   OrderSide sideFilter, OrderType typeFilter, OrderStatus statusFilter) {
+		String sql = "SELECT * FROM ORDERS";
+
+		List<String> filterList = new ArrayList<>();
+		List<Object> paramValueList= new ArrayList<Object>();
+
+		if(symbolFilter != null) {
+			filterList.add("SYMBOL=?");
+			paramValueList.add(symbolFilter);
+		}
+		if(sideFilter != null) {
+			filterList.add("SIDE=?");
+			paramValueList.add(sideFilter.toString());
+		}
+		if(typeFilter != null) {
+			filterList.add("TYPE=?");
+			paramValueList.add(typeFilter.toString());
+		}
+		if(statusFilter != null) {
+			filterList.add("STATUS=?");
+			paramValueList.add(statusFilter.toString());
+		}
+
+		if(!filterList.isEmpty()) {
+			String joinedFilterList = String.join(" AND ", filterList);
+			sql = sql + " WHERE " + joinedFilterList;
+			System.out.println(sql);
+		}
+
+		if(sortingField != null) {
+			sql += " ORDER BY " + sortingField;
+			if(order != null) {
+				sql = sql + " " + order;
+			}
+		}
+
+		return jdbcTemplate.query(sql, paramValueList.toArray(), new OrderRowMapper());
 	}
 
 	class OrderRowMapper implements RowMapper<Order>
@@ -82,13 +131,13 @@ public class OrderDao {
 			Order order = new Order();
 			order.setOrderId(rs.getLong("ORDER_ID"));
 			order.setSymbol(rs.getString("SYMBOL"));
-			order.setInstruction(rs.getString("INSTRUCTION"));
-			order.setOrderType(rs.getString("ORDER_TYPE"));
+			order.setSide(OrderSide.valueOf(rs.getString("SIDE")));
+			order.setType(OrderType.valueOf(rs.getString("TYPE")));
 			order.setPrice(rs.getDouble("PRICE"));
 			order.setVolume(rs.getInt("VOLUME"));
 			order.setPlacementTimestamp(rs.getTimestamp("PLACEMENT_TIMESTAMP"));
 			order.setTraderId(rs.getLong("TRADER_ID"));
-			order.setStatus(rs.getString("STATUS"));
+			order.setStatus(OrderStatus.valueOf(rs.getString("STATUS")));
 			return order;
 		}
 	}
