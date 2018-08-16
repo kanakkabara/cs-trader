@@ -38,7 +38,7 @@ public class OrderService {
 		order.setTraderId(traderId);
 
 		long orderId = orderDao.addOrder(order);
-		order.setOrderId(orderId);
+		order = orderDao.findOrderByOrderId(orderId);
 
 		transactionService.addNewTransaction(new Transaction(order, TransactionType.CREATED));
 		return orderId;
@@ -74,6 +74,7 @@ public class OrderService {
 		}
 
 		orderDao.updateOrderStatus(orderId, OrderStatus.CANCELLED);
+		order = orderDao.findOrderByOrderId(orderId);
 		transactionService.addNewTransaction(new Transaction(order, TransactionType.CANCELLED));
 
 		return;
@@ -146,6 +147,7 @@ public class OrderService {
 				updatedOrder.getType());
 
 		updatedOrder.setOrderId(orderId);
+		updatedOrder = orderDao.findOrderByOrderId(orderId);
 		transactionService.addNewTransaction(new Transaction(updatedOrder, TransactionType.UPDATED));
 	}
 

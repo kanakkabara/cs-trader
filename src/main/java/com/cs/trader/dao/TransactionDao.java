@@ -33,7 +33,11 @@ public class TransactionDao {
                 statement.setLong(2, transaction.getTraderID());
                 statement.setString(3, transaction.getOrderSide().toString());
                 statement.setString(4, transaction.getOrderType().toString());
-                statement.setDouble(5, transaction.getPrice());
+                if(transaction.getPrice() == null) {
+                    statement.setNull(5, Types.DOUBLE);
+                } else {
+                    statement.setDouble(5, transaction.getPrice());
+                }
                 statement.setInt(6, transaction.getVolume());
                 statement.setTimestamp(7, transaction.getTransactionTimestamp());
                 statement.setString(8, transaction.getOrderStatus().toString());
