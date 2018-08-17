@@ -47,13 +47,20 @@ public class SectorServiceTest {
         MockitoAnnotations.initMocks(this);
 
         Company company1 = new Company(1, "Company 1", "COMP1", 1);
+        Company company2 = new Company(2, "Company 2", "GOOGL", 2);
+        Company company3 = new Company(3, "Company 3", "AAPL", 2);
+        Company company4 = new Company(4, "Company 4", "IHSG", 2);
         Mockito.when(companyService.findAllCompaniesBySectorID(1)).thenReturn(new ArrayList<>(Arrays.asList(company1)));
-        Mockito.when(companyService.findAllCompaniesBySectorID(2)).thenReturn(new ArrayList<>());
+        Mockito.when(companyService.findAllCompaniesBySectorID(3)).thenReturn(new ArrayList<>());
 
         Sector sector1 = new Sector(1, "Sector1", "Desc for Sector 1");
+        Sector sector2 = new Sector(2, "Sector2", "Desc for Sector 2");
         Mockito.when(sectorDao.findSectorByID(50)).thenThrow(new SectorNotFoundException("test"));
         Mockito.when(sectorDao.findSectorByID(1)).thenReturn(sector1);
+        Mockito.when(sectorDao.findSectorByID(2)).thenReturn(sector2);
         Mockito.when(companyService.findAllCompaniesBySectorID(1)).thenReturn(new ArrayList<>(Arrays.asList(company1)));
+        Mockito.when(companyService.findAllCompaniesBySectorID(2)).thenReturn(
+                new ArrayList<>(Arrays.asList(company2, company3, company4)));
 
 
     }
@@ -65,8 +72,8 @@ public class SectorServiceTest {
 
     @Test
     public void deleteSucceedsIfSectorDoesHasValidCompanies(){
-        sectorService.deleteSector(2);
-        verify(sectorDao, times(1)).deleteSector(2);
+        sectorService.deleteSector(3);
+        verify(sectorDao, times(1)).deleteSector(3);
 
     }
 
