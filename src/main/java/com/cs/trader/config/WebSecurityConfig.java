@@ -77,7 +77,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 			.antMatchers("/log").hasAuthority(User.Authority.COMPLIANCE_OFFICER.toString())
 
-//			.antMatchers("/user").hasAuthority(User.Authority.ADMIN.toString())
+			.antMatchers("/user").hasAuthority(User.Authority.ADMIN.toString())
 		.and()
 			.httpBasic()//.formLogin().usernameParameter("username").passwordParameter("password")
 		.and()

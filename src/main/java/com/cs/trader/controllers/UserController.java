@@ -16,11 +16,6 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @GetMapping("/user")
-    public UserDetails currentUserName(Principal principal) {
-        return userService.loadUserByUsername(principal.getName());
-    }
-
     @PostMapping("/user")
     public int addNewUser(@RequestBody User user) {
         return userService.addNewUser(user);
