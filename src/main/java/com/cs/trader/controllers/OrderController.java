@@ -41,6 +41,11 @@ public class OrderController {
         return;
     }
 
+    @GetMapping(value="/orders/{id}", produces= {MediaType.APPLICATION_JSON_VALUE})
+    public Order retrieveOrderByOrderId(@PathVariable(value="id") long orderId) {
+        return orderService.retrieveOrderByOrderId(orderId);
+    }
+
     @GetMapping(value="/orders", produces= {MediaType.APPLICATION_JSON_VALUE})
     public Map<Object, List<Order>> findTraders(@RequestParam(value = "groupby", required=false) String groupingField,
                                                 @RequestParam(value = "sortby", required=false) String sortingField,
