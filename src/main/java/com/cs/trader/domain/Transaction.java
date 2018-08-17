@@ -1,23 +1,27 @@
 package com.cs.trader.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.sql.Timestamp;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Transaction {
-    private long transactionID;
+    private Long transactionID;
     private TransactionType transactionType;
 
-    private long orderID;
-    private long traderID;
+    private Long orderID;
+    private Long traderID;
     private OrderSide orderSide;
     private OrderType orderType;
     private Double price;
-    private int volume;
+    private Integer volume;
+
     private Timestamp transactionTimestamp;
     private OrderStatus orderStatus;
 
     public Transaction(){}
 
-    public Transaction(int transactionID, int orderID, int traderID, OrderSide orderSide, OrderType orderType, Double price, int volume, OrderStatus orderStatus) {
+    public Transaction(Long transactionID, Long orderID, Long traderID, OrderSide orderSide, OrderType orderType, Double price, Integer volume, OrderStatus orderStatus) {
         this.transactionID = transactionID;
         this.orderID = orderID;
         this.traderID = traderID;
@@ -44,11 +48,11 @@ public class Transaction {
         this.transactionType = type;
     }
 
-    public long getTransactionID() {
+    public Long getTransactionID() {
         return transactionID;
     }
 
-    public void setTransactionID(long transactionID) {
+    public void setTransactionID(Long transactionID) {
         this.transactionID = transactionID;
     }
 
@@ -60,19 +64,19 @@ public class Transaction {
         this.transactionType = transactionType;
     }
 
-    public long getOrderID() {
+    public Long getOrderID() {
         return orderID;
     }
 
-    public void setOrderID(long orderID) {
+    public void setOrderID(Long orderID) {
         this.orderID = orderID;
     }
 
-    public long getTraderID() {
+    public Long getTraderID() {
         return traderID;
     }
 
-    public void setTraderID(long traderID) {
+    public void setTraderID(Long traderID) {
         this.traderID = traderID;
     }
 
@@ -104,7 +108,7 @@ public class Transaction {
         return volume;
     }
 
-    public void setVolume(int volume) {
+    public void setVolume(Integer volume) {
         this.volume = volume;
     }
 

@@ -17,7 +17,7 @@ public class TransactionDao {
     private JdbcTemplate jdbc;
 
     public List<Transaction> getAllTransactions(){
-        return jdbc.query("SELECT * FROM TRANSACTIONS ORDER BY TRANSACTION_TIMESTAMP DESC", new TransactionRowMapper());
+        return jdbc.query("SELECT * FROM TRANSACTIONS t ORDER BY TRANSACTION_TIMESTAMP DESC", new TransactionRowMapper());
     }
 
     public int addNewTransaction(Transaction transaction){
