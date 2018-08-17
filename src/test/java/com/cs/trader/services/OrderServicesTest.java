@@ -52,18 +52,6 @@ public class OrderServicesTest {
 		long orderId = orderService.placeNewOrder(order, "ernest");
 	}
 
-//	@Test(expected = InvalidFieldException.class)
-//	public void validateInstructionOnOrderPlacement() {
-//		Order order = new Order("COMP2", "XXXX", OrderType.MARKET, null, 10);
-//		long orderId = orderService.placeNewOrder(order, "ernest");
-//	}
-
-//	@Test(expected = InvalidFieldException.class)
-//	public void validateTypeOnOrderPlacement() {
-//		Order order = new Order("COMP2", OrderSide.BUY, "XXXX", null, 10);
-//		long orderId = orderService.placeNewOrder(order, "ernest");
-//	}
-
 	@Test(expected = InvalidFieldException.class)
 	public void validatePriceOnOrderPlacementWithNegativeValue() {
 		Order order = new Order("COMP2", OrderSide.BUY, OrderType.LIMIT, -10.04, 10);
